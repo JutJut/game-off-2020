@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "file": "bundle.css",
+  "sources": [
+    "..\\..\\App.svelte"
+  ],
+  "sourcesContent": [
+    "<script>\n  import Phaser from 'phaser'\n  import { Game, Scene, Text, Polygon } from 'svelte-phaser'\n  let name = \"\";\n</script>\n\n<Game width={400} height={400} scale={{ autoCenter: Phaser.Scale.CENTER_BOTH }}>\n  <Scene key=\"main\">\n    <Polygon\n      x={200}\n      y={200}\n      points={[\n        {\n          x: 0,\n          y: 20,\n        },\n        {\n          x: 84,\n          y: 20,\n        },\n        {\n          x: 84,\n          y: 0,\n        },\n        {\n          x: 120,\n          y: 50,\n        },\n        {\n          x: 84,\n          y: 100,\n        },\n        {\n          x: 84,\n          y: 80,\n        },\n        {\n          x: 0,\n          y: 80,\n        },\n      ]}\n      strokeWidth={5}\n      strokeColor={0xff0000} />\n    <Text id=\"name\" class=\"nameText\" x={160} y={180} text=\"{name}\" color=\"#1b90cf\" />\n    <Text x={130} y={150} text=\"svelte-phaser\" color=\"white\" />\n  </Scene>\n</Game>\n\n<style>\n  .nameInput {\n    position: absolute;\n    margin-left: 50%;\n    margin-top: -5%;\n    color: blue;\n  }\n\n  .nametext {\n    color: blue;\n  }\n</style>\n\n<html>\n  <div>\n    <p>Hello World</p>\n    <input class=\"nameInput\" type=\"text\" name=\"testText\" id=\"txtMe\" placeholder=\"Write your name\" bind:value={name}>\n  </div>\n</html>\n"
+  ],
+  "names": [],
+  "mappings": "AAiDE,UAAU,eAAC,CAAC,AACV,QAAQ,CAAE,QAAQ,CAClB,WAAW,CAAE,GAAG,CAChB,UAAU,CAAE,GAAG,CACf,KAAK,CAAE,IAAI,AACb,CAAC"
+}
