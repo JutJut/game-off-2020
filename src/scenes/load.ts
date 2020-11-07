@@ -1,13 +1,11 @@
 import { availableCharacters } from '../config/characterConfig';
 import { OurScenes } from '../enums/scenes';
-import { JutNet } from '../services/jutnet.service';
 
 export default class LoadScene extends Phaser.Scene {
   startText: Phaser.GameObjects.Text;
   graphics: Phaser.GameObjects.Graphics;
   newGraphics: Phaser.GameObjects.Graphics;
   backgroundImage;
-  jutnet: JutNet;
 
   constructor() {
     super({
@@ -16,11 +14,10 @@ export default class LoadScene extends Phaser.Scene {
   }
 
   preload() {
-    new JutNet();
     const characters = availableCharacters;
 
     // Game images and tiles
-    this.backgroundImage = this.load.image('dark_forrest', './assets/backgrounds/background_darkforrest.jpg');    
+    this.backgroundImage = this.load.image('dark_forrest', './assets/backgrounds/background_darkforrest.jpg');
     // Game characters
     characters.forEach((characterConfig) => {
       for (const [_, value] of Object.entries(characterConfig.spriteSheets)) {

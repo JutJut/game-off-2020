@@ -2,6 +2,7 @@ import { movementKeys } from '../enums/keyboard';
 import { OurScenes } from '../enums/scenes';
 import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
+
 // import App from '../App.svelte';
 
 export default class GameScene extends Phaser.Scene {
@@ -100,20 +101,15 @@ export default class GameScene extends Phaser.Scene {
 
     if (this.keyboardInputs.D.isDown) {
       this.player.flipX = false;
-      if (this.player.body.onFloor()) {
-        if (this.keyboardInputs.SHIFT.isDown) {
+      if (this.player.body.onFloor()) {        
           this.player.body.setVelocityX(300);
           this.player.play(this.playerService.player.animations.RUN.key, true);
-        } else {
-          this.player.play(this.playerService.player.animations.WALK.key, true);
-          this.player.body.setVelocityX(200);
-        }
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(200);
-        if (this.keyboardInputs.SHIFT.isDown) {
-          this.player.body.setVelocityX(300);
-        }
+        // if (this.keyboardInputs.SHIFT.isDown) {
+        //   this.player.body.setVelocityX(300);
+        // }
       }
     }
 
@@ -125,19 +121,11 @@ export default class GameScene extends Phaser.Scene {
     if (this.keyboardInputs.A.isDown) {
       this.player.flipX = true;
       if (this.player.body.onFloor()) {
-        if (this.keyboardInputs.SHIFT.isDown) {
           this.player.body.setVelocityX(-300);
           this.player.play(this.playerService.player.animations.RUN.key, true);
-        } else {
-          this.player.play(this.playerService.player.animations.WALK.key, true);
-          this.player.body.setVelocityX(-200);
-        }
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(-200);
-        if (this.keyboardInputs.SHIFT.isDown) {
-          this.player.body.setVelocityX(-300);
-        }
       }
     }
 

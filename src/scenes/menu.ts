@@ -1,8 +1,9 @@
 
+import { writable } from 'svelte/store';
+
+import App, { count_value } from '../../src/App.svelte';
 import { OurScenes } from '../enums/scenes';
 
-import { writable } from 'svelte/store';
-import App, {count_value} from '../../src/App.svelte';
 export const count = writable(0);
 
 export default class StartMenuScene extends Phaser.Scene {
@@ -19,7 +20,7 @@ export default class StartMenuScene extends Phaser.Scene {
     // console.log(count_value);
     this.backgroundImage = this.add.image(0, 0, 'dark_forrest').setScale(1.7);    
     const width = this.game.config.width as number;
-    const height = this.game.config.height as number;    
+    const height = this.game.config.height as number;
     const startButton = this.add
       .image(width / 2.1, height / 2.3, 'button_start')
       .setInteractive()
@@ -34,7 +35,7 @@ export default class StartMenuScene extends Phaser.Scene {
       .setScale(0.4);
 
     startButton.on('pointerdown', () => {
-      this.scene.start(OurScenes.CHARACTER_PICKER);
+      this.scene.start(OurScenes.GAME);
     });
     settingsButton.on('pointerdown', () => {
       return;

@@ -1,9 +1,8 @@
-export interface CharacterHUDConfig {    
+export interface CharacterHUDConfig {
     key: string,
     path: string,
     xPosition: number,
-    yPosition: number      
+    yPosition: number
 }
 
-export const characterHUDConfig: CharacterHUDConfig[] = [                                                                                   
-];
+export const characterHUDConfig: CharacterHUDConfig[] = [];
