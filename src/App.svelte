@@ -6,15 +6,14 @@
   import StartMenuScene from './scenes/menu';  
   import GameScene from './scenes/game';
 
-  import {count} from '../src/scenes/menu';
-
-  export let count_value;
+  import { jumpCount } from './services/jumpCounter.service';
+  let visible = false;
   
   const config = {
     type: Phaser.AUTO,
     scale: {
-      // width: 1500,
-      // height: 800,
+      width: 1500,
+      height: 800,
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
     }, 
@@ -46,22 +45,29 @@
   }
 
   const game = new Phaser.Game(config);
-  function increment() {
-    count.update(n => n + 1);
-  }	
 
-  const unsubscribe = count.subscribe(value => {
+  let count_value;
+
+  const unsubscribe = jumpCount.subscribe(value => {
     count_value = value;
-  });
+    if(count_value > 10) {
+      visible = true;
+      setInterval(() => {
+        visible = false;
+      }, 5000);
+    }
+  });	
+
+
 </script>
 
+<h1>Jump counter: {count_value}</h1>
+{#if visible}
+	<p class="testClass">
+		Super Jumper!!
+	</p>
+{/if}
 <main>
-  <button on:click={increment}>
-    +
-  </button>
-  <h1>Current game state is: {count_value}
-  
-  </h1>
   <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
 </main>
 
@@ -78,6 +84,19 @@
     text-transform: uppercase;
     font-size: 4em;
     font-weight: 100;
+    position: absolute;
+    margin-top: -50%;
+    margin-left: 5%;
+  }
+
+  .testClass {
+    color: #ff3e00;
+    text-transform: uppercase;
+    font-size: 4em;
+    font-weight: 100;
+    position: absolute;
+    margin-top: -20%;
+    margin-left: 5%;
   }
 
   @media (min-width: 640px) {
@@ -86,3 +105,5 @@
     }
   }
 </style>
+
+<!-- <Menu></Menu> -->

@@ -3,8 +3,7 @@ import { OurScenes } from '../enums/scenes';
 import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
 import { mainCharacter } from '../config/characterConfig';
-
-// import App from '../App.svelte';
+import {jumpCount} from '../services/jumpCounter.service';
 
 export default class GameScene extends Phaser.Scene {
   backgroundImage: Phaser.GameObjects.Image;
@@ -15,7 +14,7 @@ export default class GameScene extends Phaser.Scene {
   didPressJump: boolean;
   keyboardService: KeyboardService;
   canJump: boolean;
-  jumpCounter: number;
+  jumpCounter: number; 
   harmfulTiles: any;
 
   constructor() {
@@ -24,14 +23,14 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  create() {    
+  create() {   
     
     this.keyboardService = new KeyboardService(this.input);
     this.playerService = PlayerService.Instance;
     this.playerService.player = mainCharacter;
 
     // IMAGES | TILES
-    this.backgroundImage = this.add.image(0, 0, 'dark_forrest').setScale(2);
+    this.backgroundImage = this.add.image(0, 0, 'dark_forrest').setScale(1);
     this.backgroundImage.scrollFactorX = 0;
     this.backgroundImage.scrollFactorY = 0;
     const arrayOfHarmfulTiles = [];
@@ -41,7 +40,7 @@ export default class GameScene extends Phaser.Scene {
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
-      .sprite(500 / 2, 50, this.playerService.player.key).setScale(2);
+      .sprite(500 / 2, 50, this.playerService.player.key);
       // .setScale(this.playerService.player.body.display.scale);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
@@ -109,6 +108,7 @@ export default class GameScene extends Phaser.Scene {
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(200);
+        this.increment();
         // if (this.keyboardInputs.SHIFT.isDown) {
         //   this.player.body.setVelocityX(300);
         // }
@@ -128,6 +128,7 @@ export default class GameScene extends Phaser.Scene {
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(-200);
+        this.increment();
       }
     }
 
@@ -140,9 +141,14 @@ export default class GameScene extends Phaser.Scene {
       this.player.play(this.playerService.player.animations.JUMP.key, true);
       this.player.setVelocityY(-300);
       this.jumpCounter++;
+      this.increment();
       if (this.jumpCounter === 2) {
         this.canJump = false;
       }
     }
   }
+
+  increment() {
+		jumpCount.update(n => n + 1);
+	}
 }

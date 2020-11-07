@@ -1,7 +1,5 @@
-
+import Phaser from 'phaser';
 import { writable } from 'svelte/store';
-
-import App, { count_value } from '../../src/App.svelte';
 import { OurScenes } from '../enums/scenes';
 
 export const count = writable(0);
