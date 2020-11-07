@@ -1,2 +1,1 @@
-# svelte-phaser-test
-test repo
+Game jam 2020
