@@ -1,4 +1,4 @@
-import { availableCharacters } from '../config/characterConfig';
+import { mainCharacter } from '../config/characterConfig';
 import { OurScenes } from '../enums/scenes';
 
 export default class LoadScene extends Phaser.Scene {
@@ -13,20 +13,19 @@ export default class LoadScene extends Phaser.Scene {
     });
   }
 
-  preload() {
-    const characters = availableCharacters;
+  preload() {  
 
     // Game images and tiles
     this.backgroundImage = this.load.image('dark_forrest', './assets/backgrounds/background_darkforrest.jpg');
     // Game characters
-    characters.forEach((characterConfig) => {
-      for (const [_, value] of Object.entries(characterConfig.spriteSheets)) {
+    
+      for (const [_, value] of Object.entries(mainCharacter.spriteSheets)) {
         this.load.spritesheet(value.key, value.path, {
-          frameWidth: characterConfig.body.display.frameWidth,
-          frameHeight: characterConfig.body.display.frameHeight,
+          frameWidth: mainCharacter.body.display.frameWidth,
+          frameHeight: mainCharacter.body.display.frameHeight,
         });
       }
-    });
+  
 
     // Menu assets
     this.load.image('button_start', './assets/Menu/Large-Buttons/Large-Buttons/PlayButton.png');

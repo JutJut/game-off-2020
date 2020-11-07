@@ -29,7 +29,7 @@ export interface CharacterConfig {
   audioAssets?;
 }
 
-export const availableCharacters: CharacterConfig[] = [
+export const mainCharacter: CharacterConfig =
   {
     key: 'striker',
     body: {
@@ -75,17 +75,16 @@ export const availableCharacters: CharacterConfig[] = [
     spriteSheets: {
       IDLE: {
         key: 'striker_idle',
-        path: './assets/Striker/strike_idle.png',
+        path: './assets/Striker/striker_idle.png',
       },
       RUN: {
         key: 'striker_run',
-        path: './assets/Striker/strike_run.png',
+        path: './assets/Striker/striker_run.png',
       },
       JUMP: {
         key: 'striker_jump',
-        path: './assets/Striker/strike_jump.png',
+        path: './assets/Striker/striker_jump.png',
       },
     },
     audioAssets: {},
-  },
-];
+  };

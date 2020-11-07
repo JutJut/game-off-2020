@@ -2,6 +2,7 @@ import { movementKeys } from '../enums/keyboard';
 import { OurScenes } from '../enums/scenes';
 import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
+import { mainCharacter } from '../config/characterConfig';
 
 // import App from '../App.svelte';
 
@@ -27,6 +28,7 @@ export default class GameScene extends Phaser.Scene {
     
     this.keyboardService = new KeyboardService(this.input);
     this.playerService = PlayerService.Instance;
+    this.playerService.player = mainCharacter;
 
     // IMAGES | TILES
     this.backgroundImage = this.add.image(0, 0, 'dark_forrest').setScale(2);
@@ -39,8 +41,8 @@ export default class GameScene extends Phaser.Scene {
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
-      .sprite(500 / 2, 50, this.playerService.player.key)
-      .setScale(this.playerService.player.body.display.scale);
+      .sprite(500 / 2, 50, this.playerService.player.key).setScale(2);
+      // .setScale(this.playerService.player.body.display.scale);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
     this.player.body.setGravityY(300);
