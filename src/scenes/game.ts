@@ -1,9 +1,9 @@
+import { mainCharacter } from '../config/characterConfig';
 import { movementKeys } from '../enums/keyboard';
 import { OurScenes } from '../enums/scenes';
+import { jumpCount } from '../services/jumpCounter.service';
 import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
-import { mainCharacter } from '../config/characterConfig';
-import {jumpCount} from '../services/jumpCounter.service';
 
 export default class GameScene extends Phaser.Scene {
   backgroundImage: Phaser.GameObjects.Image;
@@ -14,7 +14,7 @@ export default class GameScene extends Phaser.Scene {
   didPressJump: boolean;
   keyboardService: KeyboardService;
   canJump: boolean;
-  jumpCounter: number; 
+  jumpCounter: number;
   harmfulTiles: any;
 
   constructor() {
@@ -23,8 +23,8 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  create() {   
-    
+  create() {
+
     this.keyboardService = new KeyboardService(this.input);
     this.playerService = PlayerService.Instance;
     this.playerService.player = mainCharacter;
@@ -49,20 +49,20 @@ export default class GameScene extends Phaser.Scene {
     // Add player collision with platforms
     this.physics.add.collider(this.player, topLayer);
     topLayer.setCollisionByProperty({ isPlatform: true });
-       
-    for (const [key, value] of Object.entries(tilemap.tilesets[0].tileProperties)) {          
+
+    for (const [key, value] of Object.entries(tilemap.tilesets[0].tileProperties)) {
       topLayer.layer.data.forEach(function(row) {
         row.forEach(function(tile) {
-          if (tile.index === Number(key) && value.isJumpablePlatform) {            
+          if (tile.index === Number(key) && value.isJumpablePlatform) {
             tile.faceTop = true;
             tile.collideUp = true;
           }
-          if (tile.index === Number(key) && value.isHarmful) {                    
-            arrayOfHarmfulTiles.push(tile);            
+          if (tile.index === Number(key) && value.isHarmful) {
+            arrayOfHarmfulTiles.push(tile);
           }
         })
-      })     
-    }    
+      })
+    }
 
     for (const [_, value] of Object.entries(this.playerService.player.animations)) {
       this.anims.create({
@@ -82,13 +82,13 @@ export default class GameScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true, 1, 1, 0, +64);
 
     this.jumpCounter = 0;
-    this.canJump = true; 
+    this.canJump = true;
 
     this.harmfulTiles = arrayOfHarmfulTiles;
   }
 
   update() {
-   
+
     this.didPressJump = Phaser.Input.Keyboard.JustUp(this.keyboardInputs.W);
 
     if (this.player.body.onFloor()) {
@@ -102,16 +102,13 @@ export default class GameScene extends Phaser.Scene {
 
     if (this.keyboardInputs.D.isDown) {
       this.player.flipX = false;
-      if (this.player.body.onFloor()) {        
+      if (this.player.body.onFloor()) {
           this.player.body.setVelocityX(300);
           this.player.play(this.playerService.player.animations.RUN.key, true);
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(200);
         this.increment();
-        // if (this.keyboardInputs.SHIFT.isDown) {
-        //   this.player.body.setVelocityX(300);
-        // }
       }
     }
 
@@ -149,6 +146,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   increment() {
-		jumpCount.update(n => n + 1);
-	}
+    jumpCount.update(n => n + 1);
+  }
 }

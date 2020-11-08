@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { writable } from 'svelte/store';
+
 import { OurScenes } from '../enums/scenes';
 
 export const count = writable(0);
@@ -14,9 +15,9 @@ export default class StartMenuScene extends Phaser.Scene {
     });
   }
 
-  create() {  
+  create() {
     // console.log(count_value);
-    this.backgroundImage = this.add.image(0, 0, 'dark_forrest').setScale(1.7);    
+    this.backgroundImage = this.add.image(0, 0, 'dark_forrest').setScale(1.7);
     const width = this.game.config.width as number;
     const height = this.game.config.height as number;
     const startButton = this.add
@@ -40,6 +41,6 @@ export default class StartMenuScene extends Phaser.Scene {
     });
     audioButton.on('pointerdown', () => {
       return;
-    });    
-  }  
+    });
+  }
 }
