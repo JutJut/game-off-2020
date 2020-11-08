@@ -44,6 +44,7 @@ export default class GameScene extends Phaser.Scene {
       // .setScale(this.playerService.player.body.display.scale);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
+    this.player.setOffset(30,35);
     this.player.body.setGravityY(300);
 
     // Add player collision with platforms
