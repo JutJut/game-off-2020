@@ -1,7 +1,7 @@
+import { Game } from 'phaser';
 import { mainCharacter } from '../config/characterConfig';
 import { movementKeys } from '../enums/keyboard';
 import { OurScenes } from '../enums/scenes';
-import { jumpCount } from '../services/jumpCounter.service';
 import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
 
@@ -40,8 +40,7 @@ export default class GameScene extends Phaser.Scene {
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
-      .sprite(500 / 2, 50, this.playerService.player.key);
-      // .setScale(this.playerService.player.body.display.scale);
+      .sprite(500 / 2, 50, this.playerService.player.key);    
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
     this.player.setOffset(30,35);
@@ -59,7 +58,7 @@ export default class GameScene extends Phaser.Scene {
             tile.collideUp = true;
           }
           if (tile.index === Number(key) && value.isHarmful) {
-            arrayOfHarmfulTiles.push(tile);
+            arrayOfHarmfulTiles.push(tile);            
           }
         })
       })
@@ -108,8 +107,7 @@ export default class GameScene extends Phaser.Scene {
           this.player.play(this.playerService.player.animations.RUN.key, true);
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
-        this.player.body.setVelocityX(200);
-        this.increment();
+        this.player.body.setVelocityX(200);        
       }
     }
 
@@ -125,8 +123,7 @@ export default class GameScene extends Phaser.Scene {
           this.player.play(this.playerService.player.animations.RUN.key, true);
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
-        this.player.body.setVelocityX(-200);
-        this.increment();
+        this.player.body.setVelocityX(-200);       
       }
     }
 
@@ -139,14 +136,11 @@ export default class GameScene extends Phaser.Scene {
       this.player.play(this.playerService.player.animations.JUMP.key, true);
       this.player.setVelocityY(-300);
       this.jumpCounter++;
-      this.increment();
       if (this.jumpCounter === 2) {
         this.canJump = false;
       }
     }
+
   }
 
-  increment() {
-    jumpCount.update(n => n + 1);
-  }
 }
