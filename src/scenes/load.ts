@@ -5,7 +5,7 @@ export default class LoadScene extends Phaser.Scene {
   startText: Phaser.GameObjects.Text;
   graphics: Phaser.GameObjects.Graphics;
   newGraphics: Phaser.GameObjects.Graphics;
-  backgroundImage;
+  backgroundImage1;
 
   constructor() {
     super({
@@ -16,7 +16,7 @@ export default class LoadScene extends Phaser.Scene {
   preload() {
 
     // Game images and tiles
-    this.backgroundImage = this.load.image('dark_forrest', './assets/backgrounds/background_darkforrest.jpg');
+    this.backgroundImage1 = this.load.image('background1', './assets/backgrounds/background1.jpg');
     // Game characters
 
       for (const [_, value] of Object.entries(mainCharacter.spriteSheets)) {
@@ -33,8 +33,8 @@ export default class LoadScene extends Phaser.Scene {
     this.load.image('button_continue', './assets/Menu/Large-Buttons/Large-Buttons/ContinueButton.png');
     this.load.image('button_audio', './assets/Menu/Square-Buttons/Square-Buttons/AudioSquareButton.png');
 
-    this.load.image('terrain', './assets/tiles/mainlevbuild.png');
-    this.load.tilemapTiledJSON('tilemap', './assets/maps/terrain.json');
+    this.load.image('moonshot', './assets/tilemap/tiles/main.png');
+    this.load.tilemapTiledJSON('tilemap', './assets/tilemap/moonshot.json');
 
     // LoadingBar
     const graphics = this.add.graphics();
