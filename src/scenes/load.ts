@@ -33,8 +33,8 @@ export default class LoadScene extends Phaser.Scene {
     this.load.image('button_continue', './assets/Menu/Large-Buttons/Large-Buttons/ContinueButton.png');
     this.load.image('button_audio', './assets/Menu/Square-Buttons/Square-Buttons/AudioSquareButton.png');
 
-    this.load.image('terrain', './assets/tiles/mainlevbuild.png');
-    this.load.tilemapTiledJSON('tilemap', './assets/maps/terrain.json');
+    this.load.image('moonshot', './assets/tilemap/tiles/main.png');
+    this.load.tilemapTiledJSON('tilemap', './assets/tilemap/moonshot.json');
 
     // LoadingBar
     const graphics = this.add.graphics();

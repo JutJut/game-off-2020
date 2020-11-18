@@ -1,4 +1,3 @@
-import { Game } from 'phaser';
 import { mainCharacter } from '../config/characterConfig';
 import { movementKeys } from '../enums/keyboard';
 import { OurScenes } from '../enums/scenes';
@@ -34,35 +33,36 @@ export default class GameScene extends Phaser.Scene {
     this.backgroundImage.scrollFactorX = 0;
     this.backgroundImage.scrollFactorY = 0;
     const arrayOfHarmfulTiles = [];
+
     const tilemap = this.add.tilemap('tilemap');
-    const terrain = tilemap.addTilesetImage('terrain');
-    const topLayer = tilemap.createStaticLayer('top', [terrain], 0, 0);
+    const moonshot = tilemap.addTilesetImage('moonshot');
+    const mainLayer = tilemap.createStaticLayer('main', [moonshot], 0, 0);
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
-      .sprite(500 / 2, 50, this.playerService.player.key);    
+      .sprite(500 / 2, 50, this.playerService.player.key);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
     this.player.setOffset(30,35);
     this.player.body.setGravityY(300);
 
     // Add player collision with platforms
-    this.physics.add.collider(this.player, topLayer);
-    topLayer.setCollisionByProperty({ isPlatform: true });
+    this.physics.add.collider(this.player, mainLayer);
+    mainLayer.setCollisionByProperty({ isPlatform: true });
 
-    for (const [key, value] of Object.entries(tilemap.tilesets[0].tileProperties)) {
-      topLayer.layer.data.forEach(function(row) {
-        row.forEach(function(tile) {
-          if (tile.index === Number(key) && value.isJumpablePlatform) {
-            tile.faceTop = true;
-            tile.collideUp = true;
-          }
-          if (tile.index === Number(key) && value.isHarmful) {
-            arrayOfHarmfulTiles.push(tile);            
-          }
-        })
-      })
-    }
+    // for (const [key, value] of Object.entries(tilemap.tilesets[0].tileProperties)) {
+    //   mainLayer.layer.data.forEach(function(row) {
+    //     row.forEach(function(tile) {
+    //       if (tile.index === Number(key) && value.isJumpablePlatform) {
+    //         tile.faceTop = true;
+    //         tile.collideUp = true;
+    //       }
+    //       if (tile.index === Number(key) && value.isHarmful) {
+    //         arrayOfHarmfulTiles.push(tile);
+    //       }
+    //     })
+    //   })
+    // }
 
     for (const [_, value] of Object.entries(this.playerService.player.animations)) {
       this.anims.create({
@@ -107,7 +107,7 @@ export default class GameScene extends Phaser.Scene {
           this.player.play(this.playerService.player.animations.RUN.key, true);
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
-        this.player.body.setVelocityX(200);        
+        this.player.body.setVelocityX(200);
       }
     }
 
@@ -123,7 +123,7 @@ export default class GameScene extends Phaser.Scene {
           this.player.play(this.playerService.player.animations.RUN.key, true);
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
-        this.player.body.setVelocityX(-200);       
+        this.player.body.setVelocityX(-200);
       }
     }
 
