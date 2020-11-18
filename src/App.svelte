@@ -4,6 +4,8 @@
   import LoadScene from './scenes/load';
   import StartMenuScene from './scenes/menu';
 
+  let isStarted = false;
+
   const config = {
     type: Phaser.AUTO,
     scale: {
@@ -23,8 +25,8 @@
       arcade: {
         x: 0,
         y: 0,
-        width: 3500,
-        height: 800,
+        width: 400 * 32,
+        height: 100 * 32,
         gravity: { y: 300 },
         debug: true,
         fps: 60,
@@ -41,34 +43,30 @@
 
   const game = new Phaser.Game(config);
 
+  function onPlay() {
+    isStarted = true;
+  }
 </script>
 
 <style>
   main {
-    text-align: center;
-    padding: 1em;
-    max-width: 240px;
-    margin: 0 auto;
-  }
-
-  h1 {
-    color: #ff3e00;
-    text-transform: uppercase;
-    font-size: 4em;
-    font-weight: 100;
     position: absolute;
-    margin-top: -20%;
-    margin-left: 5%;
-  }
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-  @media (min-width: 640px) {
-    main {
-      max-width: none;
-    }
+    height: 100vh;
+    width: 100vw;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>
 
-
-<main>
-  <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
+{#if !isStarted}
+  <main>
+    <div><button on:click={onPlay}> Play </button></div>
+  </main>
+{/if}

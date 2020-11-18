@@ -17,7 +17,7 @@ export default class StartMenuScene extends Phaser.Scene {
 
   create() {
     // console.log(count_value);
-    this.backgroundImage = this.add.image(0, 0, 'dark_forrest').setScale(1.7);
+    this.backgroundImage = this.add.image(0, 0, 'background1').setScale(1.7);
     const width = this.game.config.width as number;
     const height = this.game.config.height as number;
     const startButton = this.add

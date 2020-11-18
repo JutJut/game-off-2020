@@ -29,8 +29,8 @@ export default class GameScene extends Phaser.Scene {
     this.playerService.player = mainCharacter;
 
     // IMAGES | TILES
-    this.backgroundImage = this.add.image(0, 0, 'dark_forrest').setScale(1);
-    this.backgroundImage.scrollFactorX = 0;
+    this.backgroundImage = this.add.image(0, 0, 'background1').setScale(1);
+    this.backgroundImage.scrollFactorX = 0; // TODO: figure out the parallax effect
     this.backgroundImage.scrollFactorY = 0;
     const arrayOfHarmfulTiles = [];
 
@@ -40,7 +40,7 @@ export default class GameScene extends Phaser.Scene {
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
-      .sprite(500 / 2, 50, this.playerService.player.key);
+      .sprite(5*32, 90*32, this.playerService.player.key);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
     this.player.setOffset(30,35);
@@ -78,7 +78,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.player.play(this.playerService.player.animations.IDLE.key);
     this.keyboardInputs = this.input.keyboard.addKeys(movementKeys);
-    this.cameras.main.setBounds(0, 0, 3500, 800);
+    this.cameras.main.setBounds(0, 0, 400*32, 100*32);
     this.cameras.main.startFollow(this.player, true, 1, 1, 0, +64);
 
     this.jumpCounter = 0;

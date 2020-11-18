@@ -5,7 +5,7 @@ export default class LoadScene extends Phaser.Scene {
   startText: Phaser.GameObjects.Text;
   graphics: Phaser.GameObjects.Graphics;
   newGraphics: Phaser.GameObjects.Graphics;
-  backgroundImage;
+  backgroundImage1;
 
   constructor() {
     super({
@@ -16,7 +16,7 @@ export default class LoadScene extends Phaser.Scene {
   preload() {
 
     // Game images and tiles
-    this.backgroundImage = this.load.image('dark_forrest', './assets/backgrounds/background_darkforrest.jpg');
+    this.backgroundImage1 = this.load.image('background1', './assets/backgrounds/background1.jpg');
     // Game characters
 
       for (const [_, value] of Object.entries(mainCharacter.spriteSheets)) {
