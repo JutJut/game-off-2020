@@ -73,6 +73,16 @@ export const mainCharacter: CharacterConfig =
         frameRate: 10,
         repeat: 0,
       },
+      DASH: {
+        key: 'DASH',
+        frames: {
+          key: 'striker_dash',
+          startFrame: 0,
+          endFrame: 15,
+        },
+        frameRate: 10,
+        repeat: 0,
+      },
     },
     spriteSheets: {
       IDLE: {
@@ -96,6 +106,12 @@ export const mainCharacter: CharacterConfig =
       DEATH: {
         key: 'striker_death',
         path: './assets/Striker/striker_death.png',
+        frameWidth: 96,
+        frameHeight: 96,
+      },
+      DASH: {
+        key: 'striker_dash',
+        path: './assets/Striker/strikerDash.png',
         frameWidth: 96,
         frameHeight: 96,
       },

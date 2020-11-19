@@ -126,9 +126,17 @@ export default class GameScene extends Phaser.Scene {
       if (this.player.body.onFloor()) {
           this.player.body.setVelocityX(300);
           this.player.play(this.playerService.player.animations.RUN.key, true);
+          if(Phaser.Input.Keyboard.DownDuration(this.keyboardInputs.SHIFT, 250)) {
+            this.player.play(this.playerService.player.animations.DASH.key, true);
+            this.player.body.setVelocityX(800);
+          }
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(200);
+        if(Phaser.Input.Keyboard.DownDuration(this.keyboardInputs.SHIFT, 250)) {
+          this.player.play(this.playerService.player.animations.DASH.key, true);
+          this.player.body.setVelocityX(800);
+        }
       }
     }
 
@@ -142,9 +150,17 @@ export default class GameScene extends Phaser.Scene {
       if (this.player.body.onFloor()) {
           this.player.body.setVelocityX(-300);
           this.player.play(this.playerService.player.animations.RUN.key, true);
+          if(Phaser.Input.Keyboard.DownDuration(this.keyboardInputs.SHIFT, 250)) {
+            this.player.play(this.playerService.player.animations.DASH.key, true);
+            this.player.body.setVelocityX(-800);
+          }
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(-200);
+        if(Phaser.Input.Keyboard.DownDuration(this.keyboardInputs.SHIFT, 250)) {
+          this.player.play(this.playerService.player.animations.DASH.key, true);
+          this.player.body.setVelocityX(-800);
+        }
       }
     }
 
@@ -170,4 +186,10 @@ export default class GameScene extends Phaser.Scene {
       this.scene.start(OurScenes.GAME);
     }, 3000);
   }
+
+  OnEvent() {
+    this.player.play(this.playerService.player.animations.DASH.key, true);
+    this.player.body.setVelocityX(800);
+  }
+
 }
