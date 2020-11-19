@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import { mainCharacter } from '../config/characterConfig';
 import { OurScenes } from '../enums/scenes';
 

@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import { mainCharacter } from '../config/characterConfig';
 import { movementKeys } from '../enums/keyboard';
 import { OurScenes } from '../enums/scenes';
@@ -108,6 +109,7 @@ export default class GameScene extends Phaser.Scene {
       this.player.play(this.playerService.player.animations.DEATH.key, false);
       console.log("You Dead")
       // TODO trigger GAME OVER or Restart
+      return this.RestartGame();
     }
 
     if (this.player.body.onFloor()) {
@@ -159,5 +161,13 @@ export default class GameScene extends Phaser.Scene {
         this.canJump = false;
       }
     }
+  }
+
+  RestartGame() {
+    this.input.keyboard.removeAllKeys();
+    console.log('You died');
+    setTimeout(() => {
+      this.scene.start(OurScenes.GAME);
+    }, 3000);
   }
 }
