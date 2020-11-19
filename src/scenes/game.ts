@@ -29,23 +29,24 @@ export default class GameScene extends Phaser.Scene {
     this.playerService = PlayerService.Instance;
     this.playerService.player = mainCharacter;
 
-<<<<<<< HEAD
+
     // IMAGES | TILES   
     // this.backgroundImage.scrollFactorX = 0; // TODO: figure out the parallax effect
     // this.backgroundImage.scrollFactorY = 0;
-=======
+
     // IMAGES | TILES
     const {width, height} = this.sys.game.scale.gameSize;
 
     this.backgroundImage1 = this.add.tileSprite(0, 0, width, height, 'background1').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
     this.backgroundImage2 = this.add.tileSprite(0, 0, width, height, 'background2').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
-
->>>>>>> f5d1f6f7e7613312153716fcf15d8fece0e1a52b
     const arrayOfHarmfulTiles = [];
 
     const tilemap = this.add.tilemap('tilemap');
     const moonshot = tilemap.addTilesetImage('moonshot');
     const mainLayer = tilemap.createStaticLayer('main', [moonshot], 0, 0);
+
+    const background = tilemap.addTilesetImage('backgroundLayer');
+    const backgroundLayer = tilemap.createStaticLayer('backgroundLayer', [background], 0, 0);
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
