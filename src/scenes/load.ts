@@ -23,8 +23,8 @@ export default class LoadScene extends Phaser.Scene {
     // Game characters
       for (const [_, value] of Object.entries(mainCharacter.spriteSheets)) {
         this.load.spritesheet(value.key, value.path, {
-          frameWidth: mainCharacter.body.display.frameWidth,
-          frameHeight: mainCharacter.body.display.frameHeight,
+          frameWidth: value.frameWidth,
+          frameHeight: value.frameHeight,
         });
       }
 

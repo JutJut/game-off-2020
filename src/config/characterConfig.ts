@@ -1,11 +1,6 @@
 export interface CharacterConfig {
   key: string;
   body: {
-    display: {
-      frameWidth: number;
-      frameHeight: number;
-      scale: number;
-    };
     health: number;
   };
   animations: {
@@ -24,6 +19,8 @@ export interface CharacterConfig {
     [key: string]: {
       key: string;
       path: string;
+      frameWidth: number;
+      frameHeight: number;
     };
   };
   audioAssets?;
@@ -33,11 +30,6 @@ export const mainCharacter: CharacterConfig =
   {
     key: 'striker',
     body: {
-      display: {
-        frameWidth: 96,
-        frameHeight: 96,
-        scale: 1,
-      },
       health: 1000,
     },
     animations: {
@@ -71,19 +63,41 @@ export const mainCharacter: CharacterConfig =
         frameRate: 10,
         repeat: -1,
       },
+      DEATH: {
+        key: 'DEATH',
+        frames: {
+          key: 'striker_death',
+          startFrame: 0,
+          endFrame: 15,
+        },
+        frameRate: 10,
+        repeat: 0,
+      },
     },
     spriteSheets: {
       IDLE: {
         key: 'striker_idle',
         path: './assets/Striker/striker_idle.png',
+        frameWidth: 96,
+        frameHeight: 96,
       },
       RUN: {
         key: 'striker_run',
         path: './assets/Striker/striker_run.png',
+        frameWidth: 96,
+        frameHeight: 96,
       },
       JUMP: {
         key: 'striker_jump',
         path: './assets/Striker/striker_jump.png',
+        frameWidth: 96,
+        frameHeight: 96,
+      },
+      DEATH: {
+        key: 'striker_death',
+        path: './assets/Striker/striker_death.png',
+        frameWidth: 96,
+        frameHeight: 96,
       },
     },
     audioAssets: {},

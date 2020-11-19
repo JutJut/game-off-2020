@@ -97,6 +97,12 @@ export default class GameScene extends Phaser.Scene {
 
     this.didPressJump = Phaser.Input.Keyboard.JustUp(this.keyboardInputs.W);
 
+    if (Phaser.Input.Keyboard.JustDown(this.keyboardInputs.SPACE)) {
+      this.player.play(this.playerService.player.animations.DEATH.key, false);
+      console.log("You Dead")
+      // TODO trigger GAME OVER or Restart
+    }
+
     if (this.player.body.onFloor()) {
       this.jumpCounter = 0;
       this.canJump = true;
@@ -146,7 +152,5 @@ export default class GameScene extends Phaser.Scene {
         this.canJump = false;
       }
     }
-
   }
-
 }
