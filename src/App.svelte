@@ -12,7 +12,7 @@
       width: 1500,
       height: 800,
       mode: Phaser.Scale.FIT,
-      autoCenter: Phaser.Scale.CENTER_BOTH,
+      autoCenter: Phaser.Scale.RESIZE,
     },
     scene: [LoadScene, StartMenuScene, GameScene],
     parent: 'parent',
@@ -25,8 +25,8 @@
       arcade: {
         x: 0,
         y: 0,
-        width: 400 * 32,
-        height: 100 * 32,
+        width: 12800,
+        height: 3200,
         gravity: { y: 300 },
         debug: true,
         fps: 60,
@@ -67,6 +67,6 @@
 
 {#if !isStarted}
   <main>
-    <div><button on:click={onPlay}> Play </button></div>
+    <!-- <div><button on:click={onPlay}> Play </button></div> -->
   </main>
 {/if}
