@@ -4,7 +4,9 @@
   import LoadScene from './scenes/load';
   import StartMenuScene from './scenes/menu';
 
-  let isStarted = false;
+  import { sceneName } from './services/CurrentScene/currentScene.service';
+
+  let currentSceneName;
 
   const config = {
     type: Phaser.AUTO,
@@ -43,8 +45,12 @@
 
   const game = new Phaser.Game(config);
 
+  const unsubscribe = sceneName.subscribe((value) => {
+    currentSceneName = value;
+  });
+
   function onPlay() {
-    isStarted = true;
+    
   }
 </script>
 
@@ -65,8 +71,9 @@
   }
 </style>
 
-{#if !isStarted}
+{#if currentSceneName == 'Start Menu'}
   <main>
-    <!-- <div><button on:click={onPlay}> Play </button></div> -->
+     <div><button on:click={onPlay}> Play </button></div>
   </main>
 {/if}
+<h1>Scene is: {currentSceneName}</h1>

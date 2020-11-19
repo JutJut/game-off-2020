@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { OurScenes } from '../enums/scenes';
+import { sceneName } from '../services/CurrentScene/currentScene.service';
 
 export default class StartMenuScene extends Phaser.Scene {
   backgroundImage: Phaser.GameObjects.Image;
@@ -11,7 +12,8 @@ export default class StartMenuScene extends Phaser.Scene {
     });
   }
 
-  create() {    
+  create() {
+    sceneName.set(this.scene.manager.getScene(this.scene.key).scene.key);
     this.backgroundImage = this.add.image(0, 0, 'background1').setScale(1.7);
     const width = this.game.config.width as number;
     const height = this.game.config.height as number;

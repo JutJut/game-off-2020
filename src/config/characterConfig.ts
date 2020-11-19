@@ -81,7 +81,17 @@ export const mainCharacter: CharacterConfig =
           endFrame: 15,
         },
         frameRate: 10,
-        repeat: 0,
+        repeat: -1,
+      },
+      ATTACK: {
+        key: 'ATTACK',
+        frames: {
+          key: 'striker_slash',
+          startFrame: 0,
+          endFrame: 15,
+        },
+        frameRate: 10,
+        repeat: -1,
       },
     },
     spriteSheets: {
@@ -113,6 +123,12 @@ export const mainCharacter: CharacterConfig =
         key: 'striker_dash',
         path: './assets/Striker/strikerDash.png',
         frameWidth: 96,
+        frameHeight: 96,
+      },
+      ATTACK: {
+        key: 'striker_slash',
+        path: './assets/Striker/strikerSlashWithEffect.png',
+        frameWidth: 128,
         frameHeight: 96,
       },
     },

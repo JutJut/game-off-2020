@@ -1,3 +1,3 @@
 import { writable } from 'svelte/store';
 
-export const jumpCount = writable(0);
+export const sceneName = writable('');

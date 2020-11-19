@@ -5,6 +5,8 @@ import { OurScenes } from '../enums/scenes';
 import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
 
+import { sceneName } from '../services/CurrentScene/currentScene.service';
+
 export default class GameScene extends Phaser.Scene {
   backgroundImage1: Phaser.GameObjects.Image;
   backgroundImage2: Phaser.GameObjects.Image;
@@ -26,10 +28,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
+    console.log(this.scene.manager.getScene(this.scene.key).scene.key);
+    sceneName.set(this.scene.manager.getScene(this.scene.key).scene.key);
     this.keyboardService = new KeyboardService(this.input);
     this.playerService = PlayerService.Instance;
     this.playerService.player = mainCharacter;
-
+    this.game.input.mouse.capture = true;
     // IMAGES | TILES
     const {width, height} = this.sys.game.scale.gameSize;
 
@@ -108,6 +112,9 @@ export default class GameScene extends Phaser.Scene {
           if(Phaser.Input.Keyboard.DownDuration(this.keyboardInputs.SHIFT, 250)) {
             this.player.play(this.playerService.player.animations.DASH.key, true);
             this.player.body.setVelocityX(800);
+          }
+          if(this.game.input.activePointer.leftButtonDown()) {
+            this.player.play(this.playerService.player.animations.ATTACK.key, true);
           }
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);

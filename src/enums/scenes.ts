@@ -1,5 +1,5 @@
 export enum OurScenes {
   GAME = 'Game',
-  START_MENU = 'StartMenu',
+  START_MENU = 'Start Menu',
   LOAD = 'Load', 
 }
