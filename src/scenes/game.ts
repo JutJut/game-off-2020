@@ -5,9 +5,11 @@ import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
 
 export default class GameScene extends Phaser.Scene {
-  backgroundImage: Phaser.GameObjects.Image;
+  backgroundImage1: Phaser.GameObjects.Image;
+  backgroundImage2: Phaser.GameObjects.Image;
   platforms;
   player;
+  camera;
   playerService: PlayerService;
   keyboardInputs;
   didPressJump: boolean;
@@ -23,14 +25,22 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
-
     this.keyboardService = new KeyboardService(this.input);
     this.playerService = PlayerService.Instance;
     this.playerService.player = mainCharacter;
 
+<<<<<<< HEAD
     // IMAGES | TILES   
     // this.backgroundImage.scrollFactorX = 0; // TODO: figure out the parallax effect
     // this.backgroundImage.scrollFactorY = 0;
+=======
+    // IMAGES | TILES
+    const {width, height} = this.sys.game.scale.gameSize;
+
+    this.backgroundImage1 = this.add.tileSprite(0, 0, width, height, 'background1').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
+    this.backgroundImage2 = this.add.tileSprite(0, 0, width, height, 'background2').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
+
+>>>>>>> f5d1f6f7e7613312153716fcf15d8fece0e1a52b
     const arrayOfHarmfulTiles = [];
 
     const tilemap = this.add.tilemap('tilemap');
@@ -77,8 +87,9 @@ export default class GameScene extends Phaser.Scene {
 
     this.player.play(this.playerService.player.animations.IDLE.key);
     this.keyboardInputs = this.input.keyboard.addKeys(movementKeys);
-    this.cameras.main.setBounds(0, 0, 400*32, 100*32);
-    this.cameras.main.startFollow(this.player, true, 1, 1, 0, +64);
+    this.camera = this.cameras.main;
+    this.camera.setBounds(0, 0, 12800, 3200);
+    this.camera.startFollow(this.player, true, 1, 1, 0, +64);
 
     this.jumpCounter = 0;
     this.canJump = true;
@@ -87,6 +98,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   update() {
+    this.backgroundImage1.tilePositionX = this.camera.scrollX * 0.3;
+    this.backgroundImage2.tilePositionX = this.camera.scrollX * 0.5;
 
     this.didPressJump = Phaser.Input.Keyboard.JustUp(this.keyboardInputs.W);
 
