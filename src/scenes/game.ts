@@ -16,8 +16,8 @@ export default class GameScene extends Phaser.Scene {
   didPressJump: boolean;
   keyboardService: KeyboardService;
   canJump: boolean;
+  canDash: boolean;
   jumpCounter: number;
-  harmfulTiles: any;
 
   constructor() {
     super({
@@ -29,11 +29,6 @@ export default class GameScene extends Phaser.Scene {
     this.keyboardService = new KeyboardService(this.input);
     this.playerService = PlayerService.Instance;
     this.playerService.player = mainCharacter;
-
-
-    // IMAGES | TILES   
-    // this.backgroundImage.scrollFactorX = 0; // TODO: figure out the parallax effect
-    // this.backgroundImage.scrollFactorY = 0;
 
     // IMAGES | TILES
     const {width, height} = this.sys.game.scale.gameSize;
@@ -51,29 +46,15 @@ export default class GameScene extends Phaser.Scene {
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
-      .sprite(5*32, 90*32, this.playerService.player.key);
-    this.player.setBounce(0.2);
-    this.player.setCollideWorldBounds(true);
-    this.player.setOffset(30,35);
+      .sprite(5*32, 90*32, this.playerService.player.key)
+      .setBounce(0.2)
+      .setCollideWorldBounds(true)
+      .setOffset(30,35);
     this.player.body.setGravityY(300);
 
     // Add player collision with platforms
     this.physics.add.collider(this.player, mainLayer);
     mainLayer.setCollisionByProperty({ isPlatform: true });
-
-    // for (const [key, value] of Object.entries(tilemap.tilesets[0].tileProperties)) {
-    //   mainLayer.layer.data.forEach(function(row) {
-    //     row.forEach(function(tile) {
-    //       if (tile.index === Number(key) && value.isJumpablePlatform) {
-    //         tile.faceTop = true;
-    //         tile.collideUp = true;
-    //       }
-    //       if (tile.index === Number(key) && value.isHarmful) {
-    //         arrayOfHarmfulTiles.push(tile);
-    //       }
-    //     })
-    //   })
-    // }
 
     for (const [_, value] of Object.entries(this.playerService.player.animations)) {
       this.anims.create({
@@ -89,14 +70,12 @@ export default class GameScene extends Phaser.Scene {
 
     this.player.play(this.playerService.player.animations.IDLE.key);
     this.keyboardInputs = this.input.keyboard.addKeys(movementKeys);
-    this.camera = this.cameras.main;
-    this.camera.setBounds(0, 0, 12800, 3200);
-    this.camera.startFollow(this.player, true, 1, 1, 0, +64);
+    this.camera = this.cameras.main
+                  .setBounds(0, 0, 12800, 3200)
+                  .startFollow(this.player, true, 1, 1, 0, +64);
 
     this.jumpCounter = 0;
-    this.canJump = true;
-
-    this.harmfulTiles = arrayOfHarmfulTiles;
+    this.canJump = true;   
   }
 
   update() {

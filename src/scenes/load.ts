@@ -22,20 +22,16 @@ export default class LoadScene extends Phaser.Scene {
     this.backgroundImage2 = this.load.image('background2', './assets/backgrounds/background2.png');
 
     // Game characters
-      for (const [_, value] of Object.entries(mainCharacter.spriteSheets)) {
-        this.load.spritesheet(value.key, value.path, {
-          frameWidth: value.frameWidth,
-          frameHeight: value.frameHeight,
-        });
-      }
-
+    for (const [_, value] of Object.entries(mainCharacter.spriteSheets)) {
+      this.load.spritesheet(value.key, value.path, {
+        frameWidth: value.frameWidth,
+        frameHeight: value.frameHeight,
+      });
+    }
 
     // Menu assets
     this.load.image('button_start', './assets/Menu/Large-Buttons/Large-Buttons/PlayButton.png');
-    this.load.image('button_settings', './assets/Menu/Large-Buttons/Large-Buttons/SettingsButton.png');
-    this.load.image('button_continue', './assets/Menu/Large-Buttons/Large-Buttons/ContinueButton.png');
     this.load.image('button_audio', './assets/Menu/Square-Buttons/Square-Buttons/AudioSquareButton.png');
-
     this.load.image('moonshot', './assets/tilemap/tiles/main.png');
     this.load.image('backgroundLayer', './assets/tilemap/tiles/background_layer.png');
     this.load.tilemapTiledJSON('tilemap', './assets/tilemap/moonshot.json');
