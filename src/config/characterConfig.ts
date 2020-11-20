@@ -30,7 +30,7 @@ export const mainCharacter: CharacterConfig =
   {
     key: 'striker',
     body: {
-      health: 1000,
+      health: 100,
     },
     animations: {
       IDLE: {

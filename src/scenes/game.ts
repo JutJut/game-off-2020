@@ -6,6 +6,7 @@ import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
 
 import { sceneName } from '../services/CurrentScene/currentScene.service';
+import { playerHealth } from '../services/playerHealth.service';
 
 export default class GameScene extends Phaser.Scene {
   backgroundImage1: Phaser.GameObjects.Image;
@@ -27,9 +28,9 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  create() {
-    console.log(this.scene.manager.getScene(this.scene.key).scene.key);
+  create() {    
     sceneName.set(this.scene.manager.getScene(this.scene.key).scene.key);
+    
     this.keyboardService = new KeyboardService(this.input);
     this.playerService = PlayerService.Instance;
     this.playerService.player = mainCharacter;
@@ -55,7 +56,7 @@ export default class GameScene extends Phaser.Scene {
       .setCollideWorldBounds(true)
       .setOffset(30,35);
     this.player.body.setGravityY(300);
-
+    playerHealth.set(this.playerService.player.body.health);
     // Add player collision with platforms
     this.physics.add.collider(this.player, mainLayer);
     mainLayer.setCollisionByProperty({ isPlatform: true });
