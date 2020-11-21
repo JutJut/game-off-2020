@@ -24,6 +24,7 @@ export interface CharacterConfig {
     };
   };
   audioAssets?;
+  helpers;
 }
 
 export const mainCharacter: CharacterConfig =
@@ -133,4 +134,8 @@ export const mainCharacter: CharacterConfig =
       },
     },
     audioAssets: {},
+    helpers: {
+      dashCooldown: 5,
+      dashPercentage: 100
+    }
   };

@@ -75,8 +75,6 @@
     top: 0; left: 5%; bottom: 0; right: 0;
   }
 </style>
-<h1>Scene is: {currentSceneName}</h1>
-
 {#if currentSceneName == 'Start Menu'}
   <main>
      <div><button> Play </button></div>

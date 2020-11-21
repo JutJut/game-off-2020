@@ -1,18 +1,21 @@
 <script>
-    import {playerHealth} from './playerHealth.service';
+    import {playerHealth ,dashCooldownPercentage, dashOverlayClass} from './playerHealth.service';
     import ProgressBar from '@okrad/svelte-progressbar';    
 
     let playerHealthValue;
+    let playerDashCooldownValue;
+    let dashClassValue;
+
     playerHealth.subscribe((value) => {
         playerHealthValue = value;
     });
-
-    let dashClass = 'dashHighlight';
-    if(playerHealthValue < 100) {
-        dashClass = 'dashOff';
-    }
-
-
+    dashCooldownPercentage.subscribe((value) => {
+      playerDashCooldownValue = value;
+    });
+    dashOverlayClass.subscribe((value) => {
+      dashClassValue = value;
+    });
+   
 </script>
 <style>
 .dashHighlight {  
@@ -35,6 +38,10 @@
 .dashOff {
     color: #808080;
 }
+
+h3 {
+  user-select: none;
+}
     
 </style>
 <h1>Player health is: {playerHealthValue}</h1>
@@ -45,7 +52,7 @@ series={[{
     perc: playerHealthValue,
     color: '#660000'   
 }, {
-    perc: 20,
+    perc: playerDashCooldownValue,
     color: '#005c99'
 }]}
 textSize={20}
@@ -57,6 +64,6 @@ width={200}
 height={200}
 >
     <foreignObject x="25" y="20" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-        <h3 class={dashClass}>DASH</h3>
+        <h3 class={dashClassValue}>DASH</h3>
     </foreignObject>
 </ProgressBar>
