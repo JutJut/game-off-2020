@@ -1,16 +1,16 @@
 import Phaser from 'phaser';
+
 import { mainCharacter } from '../config/characterConfig';
 import { movementKeys } from '../enums/keyboard';
 import { OurScenes } from '../enums/scenes';
+import { sceneName } from '../services/currentScene.service';
 import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
-
-import { sceneName } from '../services/CurrentScene/currentScene.service';
 import { playerHealth } from '../services/playerHealth.service';
 
 export default class GameScene extends Phaser.Scene {
-  backgroundImage1: Phaser.GameObjects.Image;
-  backgroundImage2: Phaser.GameObjects.Image;
+  backgroundImage1: Phaser.GameObjects.TileSprite;
+  backgroundImage2: Phaser.GameObjects.TileSprite;
   platforms;
   player;
   camera;
@@ -28,9 +28,9 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  create() {    
+  create() {
     sceneName.set(this.scene.manager.getScene(this.scene.key).scene.key);
-    
+
     this.keyboardService = new KeyboardService(this.input);
     this.playerService = PlayerService.Instance;
     this.playerService.player = mainCharacter;
@@ -51,7 +51,7 @@ export default class GameScene extends Phaser.Scene {
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
-      .sprite(5*32, 90*32, this.playerService.player.key)
+      .sprite(2*32, 85*32, this.playerService.player.key)
       .setBounce(0.2)
       .setCollideWorldBounds(true)
       .setOffset(30,35);
@@ -80,7 +80,7 @@ export default class GameScene extends Phaser.Scene {
                   .startFollow(this.player, true, 1, 1, 0, +64);
 
     this.jumpCounter = 0;
-    this.canJump = true;   
+    this.canJump = true;
   }
 
   update() {

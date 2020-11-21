@@ -1,13 +1,12 @@
 <script lang="typescript">
   import Phaser from 'phaser';
+  import PlayerHealthProgressBar from './PlayerHealthProgressBar.svelte';
   import GameScene from './scenes/game';
   import LoadScene from './scenes/load';
-  import StartMenuScene from './scenes/menu';  
+  import StartMenuScene from './scenes/menu';
+  import { sceneName } from './services/currentScene.service';
 
-  import { sceneName } from './services/CurrentScene/currentScene.service';
-  import PlayerHealthProgressBar from './services/PlayerHealthProgressBar.svelte';
-
-  // Set service variables 
+  // Set service variables
   let currentSceneName;
   let playerHealthValue;
 
@@ -51,7 +50,6 @@
   sceneName.subscribe((value) => {
     currentSceneName = value;
   });
-
 </script>
 
 <style>
@@ -70,20 +68,22 @@
     align-items: center;
   }
 
-  .progressBar{
+  .progressBar {
     position: absolute;
-    top: 0; left: 5%; bottom: 0; right: 0;
+    top: 5%;
+    left: 5%;
+    display: flex;
+    flex-direction: column;
   }
 </style>
-<h1>Scene is: {currentSceneName}</h1>
 
-{#if currentSceneName == 'Start Menu'}
+{#if currentSceneName === 'Start Menu'}
   <main>
-     <div><button> Play </button></div>
+    <div><button> Play </button></div>
   </main>
 {/if}
-{#if currentSceneName == 'Game'}
-<div class="progressBar">
-  <PlayerHealthProgressBar />
-</div>
+{#if currentSceneName === 'Game'}
+  <div class="progressBar">
+    <PlayerHealthProgressBar />
+  </div>
 {/if}
