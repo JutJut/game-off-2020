@@ -4,7 +4,7 @@
   import LoadScene from './scenes/load';
   import StartMenuScene from './scenes/menu';  
 
-  import { sceneName } from './services/CurrentScene/currentScene.service';
+  import { sceneName } from './services/currentScene.service';
   import PlayerHealthProgressBar from './services/PlayerHealthProgressBar.svelte';
 
   // Set service variables 

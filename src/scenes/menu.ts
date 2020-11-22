@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
+
 import { OurScenes } from '../enums/scenes';
-import { sceneName } from '../services/CurrentScene/currentScene.service';
+import { sceneName } from '../services/currentScene.service';
 
 export default class StartMenuScene extends Phaser.Scene {
   backgroundImage: Phaser.GameObjects.Image;
