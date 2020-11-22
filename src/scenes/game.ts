@@ -9,6 +9,8 @@ import { PlayerService } from '../services/player.service';
 import { playerHealth, dashCooldownPercentage, dashOverlayClass, canDash } from '../services/playerHealth.service';
 
 let timedDashCooldown;
+let timedEvent;
+let text;
 
 export default class GameScene extends Phaser.Scene {
   backgroundImage1: Phaser.GameObjects.TileSprite;
@@ -95,6 +97,8 @@ export default class GameScene extends Phaser.Scene {
     canDash.subscribe((value) => {
       this.canPlayerDash = value;
     });  
+
+    text = this.add.text(0, 0, '');
   }
 
   update() {
@@ -183,8 +187,7 @@ export default class GameScene extends Phaser.Scene {
         this.canJump = false;
       }
     }
-
-  }
+  } // End of update
 
   RestartGame() {
     this.input.keyboard.removeAllKeys();
@@ -194,24 +197,23 @@ export default class GameScene extends Phaser.Scene {
     }, 3000);
   }
 
-  OnEvent() {
-    this.player.play(this.playerService.player.animations.DASH.key, true);
-    this.player.body.setVelocityX(800);
+  DashCooldown() {
+    timedEvent = this.time.addEvent({ delay: 500, callback: this.onDashCooldownEvent, callbackScope: this, repeat: 9 });    
   }
 
-  DashCooldown() {
-    canDash.set(false);       
-    timedDashCooldown = 0;
-    dashOverlayClass.set('dashOff');
-    let interval = setInterval(function(){        
-      timedDashCooldown++;
-      dashCooldownPercentage.set(timedDashCooldown);           
-      if (timedDashCooldown == 100) {        
-        dashOverlayClass.set('dashHighlight');
-        canDash.set(true);          
-        clearInterval(interval)
-      }
-    }, 50);  
+  onDashCooldownEvent ()
+  {   
+    text.setText(timedEvent.getOverallProgress().toFixed(2).split(".")[1]);    
+    dashOverlayClass.set('dashOff'); 
+    timedDashCooldown = parseInt(text.text);
+    if(timedDashCooldown < 99) {
+      console.log(parseInt(timedDashCooldown));      
+      dashCooldownPercentage.set(timedDashCooldown)
+    }
+    else if(timedDashCooldown == 99) {
+      dashOverlayClass.set('dashHighlight');
+      dashCooldownPercentage.set(100);
+    }
   }
 }
 
