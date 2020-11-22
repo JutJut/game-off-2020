@@ -1,10 +1,11 @@
 <script>
   import ProgressBar from '@okrad/svelte-progressbar';
-  import { playerHealth } from './services/playerHealth.service';
+  import { gameState } from './store';
 
   let playerHealthValue;
-  playerHealth.subscribe((value) => {
-    playerHealthValue = value;
+
+  const unsubscribe = gameState.subscribe((value) => {
+    playerHealthValue = value.playerHealth;
   });
 
   let dashClass = 'dashHighlight';

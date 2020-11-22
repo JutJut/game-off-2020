@@ -2,14 +2,9 @@
   import Phaser from 'phaser';
   import GameScene from './scenes/game';
   import LoadScene from './scenes/load';
-  import StartMenuScene from './scenes/menu';  
-
-  import { sceneName } from './services/currentScene.service';
+  import StartMenuScene from './scenes/menu';
   import PlayerHealthProgressBar from './services/PlayerHealthProgressBar.svelte';
-
-  // Set service variables 
-  let currentSceneName;
-  let playerHealthValue;
+  import { gameState } from './store';
 
   const config = {
     type: Phaser.AUTO,
@@ -47,11 +42,6 @@
   };
 
   const game = new Phaser.Game(config);
-
-  sceneName.subscribe((value) => {
-    currentSceneName = value;
-  });
-
 </script>
 
 <style>
@@ -70,18 +60,22 @@
     align-items: center;
   }
 
-  .progressBar{
+  .progressBar {
     position: absolute;
-    top: 0; left: 5%; bottom: 0; right: 0;
+    top: 0;
+    left: 5%;
+    bottom: 0;
+    right: 0;
   }
 </style>
-{#if currentSceneName == 'Start Menu'}
+
+{#if $gameState.scene === 'Start Menu'}
   <main>
-     <div><button> Play </button></div>
+    <div><button> Play </button></div>
   </main>
 {/if}
-{#if currentSceneName == 'Game'}
-<div class="progressBar">
-  <PlayerHealthProgressBar />
-</div>
+{#if $gameState.scene === 'Game'}
+  <div class="progressBar">
+    <PlayerHealthProgressBar />
+  </div>
 {/if}

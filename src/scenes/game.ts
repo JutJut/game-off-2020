@@ -1,12 +1,11 @@
-import Phaser, { Time } from 'phaser';
+import Phaser from 'phaser';
+
 import { mainCharacter } from '../config/characterConfig';
 import { movementKeys } from '../enums/keyboard';
 import { OurScenes } from '../enums/scenes';
-import { sceneName } from '../services/currentScene.service';
 import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
-
-import { playerHealth, dashCooldownPercentage, dashOverlayClass, canDash } from '../services/playerHealth.service';
+import { gameState } from '../store';
 
 let timedDashCooldown;
 let timedEvent;
@@ -24,7 +23,7 @@ export default class GameScene extends Phaser.Scene {
   keyboardService: KeyboardService;
   canJump: boolean;
   canPlayerDash: boolean;
-  jumpCounter: number;    
+  jumpCounter: number;
   dashed: boolean;
 
   constructor() {
@@ -33,9 +32,7 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  create() {    
-
-    sceneName.set(this.scene.manager.getScene(this.scene.key).scene.key);    
+  create() {
     this.keyboardService = new KeyboardService(this.input);
     this.playerService = PlayerService.Instance;
     this.playerService.player = mainCharacter;
@@ -45,7 +42,6 @@ export default class GameScene extends Phaser.Scene {
 
     //Starting values
     timedDashCooldown = this.playerService.player.helpers.dashPercentage;
-    canDash.set(true);
 
     this.backgroundImage1 = this.add.tileSprite(0, 0, width, height, 'background1').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
     this.backgroundImage2 = this.add.tileSprite(0, 0, width, height, 'background2').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
@@ -65,10 +61,16 @@ export default class GameScene extends Phaser.Scene {
       .setCollideWorldBounds(true)
       .setOffset(30,35);
     this.player.body.setGravityY(300);
-    playerHealth.set(this.playerService.player.body.health); // Player health set
-    dashCooldownPercentage.set(timedDashCooldown); // Player set dash percentage cd
-    dashOverlayClass.set('dashHighlight'); // Dash class for overlay
-    
+
+
+    gameState.set({
+      scene: this.scene.manager.getScene(this.scene.key).scene.key,
+      playerHealth: this.playerService.player.body.health,
+      dashCooldownPercentage: timedDashCooldown,
+      dashOverlayClass: 'dashHighlight',
+      canDash: true,
+    })
+
     // Add player collision with platforms
     this.physics.add.collider(this.player, mainLayer);
     mainLayer.setCollisionByProperty({ isPlatform: true });
@@ -92,17 +94,18 @@ export default class GameScene extends Phaser.Scene {
                   .startFollow(this.player, true, 1, 1, 0, +64);
 
     this.jumpCounter = 0;
-    this.canJump = true;   
+    this.canJump = true;
 
-    canDash.subscribe((value) => {
-      this.canPlayerDash = value;
-    });  
+
+    const unsubscribe = gameState.subscribe((value) => {
+      this.canPlayerDash = value.canDash;
+    });
 
     text = this.add.text(0, 0, '');
   }
 
   update() {
- 
+
     this.backgroundImage1.tilePositionX = this.camera.scrollX * 0.3;
     this.backgroundImage2.tilePositionX = this.camera.scrollX * 0.5;
 
@@ -112,9 +115,9 @@ export default class GameScene extends Phaser.Scene {
       this.player.play(this.playerService.player.animations.DEATH.key, false);
       console.log("You Dead")
       // TODO trigger GAME OVER or Restart
-      return this.RestartGame();             
+      return this.restartGame();
     }
-   
+
     if (this.player.body.onFloor()) {
       this.jumpCounter = 0;
       this.canJump = true;
@@ -131,8 +134,8 @@ export default class GameScene extends Phaser.Scene {
           this.player.play(this.playerService.player.animations.RUN.key, true);
           if(Phaser.Input.Keyboard.UpDuration(this.keyboardInputs.SHIFT,250) && this.canPlayerDash) {
             this.player.play(this.playerService.player.animations.DASH.key, true);
-            this.player.body.setVelocityX(800);   
-            this.DashCooldown();
+            this.player.body.setVelocityX(800);
+            this.dashCooldown();
           }
           if(this.game.input.activePointer.leftButtonDown()) {
             this.player.play(this.playerService.player.animations.ATTACK.key, true);
@@ -142,8 +145,8 @@ export default class GameScene extends Phaser.Scene {
         this.player.body.setVelocityX(200);
         if(Phaser.Input.Keyboard.UpDuration(this.keyboardInputs.SHIFT,250)  && this.canPlayerDash) {
           this.player.play(this.playerService.player.animations.DASH.key, true);
-          this.player.body.setVelocityX(800);       
-          this.DashCooldown();
+          this.player.body.setVelocityX(800);
+          this.dashCooldown();
         }
       }
     }
@@ -160,16 +163,16 @@ export default class GameScene extends Phaser.Scene {
           this.player.play(this.playerService.player.animations.RUN.key, true);
           if(Phaser.Input.Keyboard.UpDuration(this.keyboardInputs.SHIFT,250) && this.canPlayerDash) {
             this.player.play(this.playerService.player.animations.DASH.key, true);
-            this.player.body.setVelocityX(-800); 
-            this.DashCooldown();           
+            this.player.body.setVelocityX(-800);
+            this.dashCooldown();
           }
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(-200);
         if(Phaser.Input.Keyboard.UpDuration(this.keyboardInputs.SHIFT,250) && this.canPlayerDash) {
           this.player.play(this.playerService.player.animations.DASH.key, true);
-          this.player.body.setVelocityX(-800);        
-          this.DashCooldown();  
+          this.player.body.setVelocityX(-800);
+          this.dashCooldown();
         }
       }
     }
@@ -187,9 +190,9 @@ export default class GameScene extends Phaser.Scene {
         this.canJump = false;
       }
     }
-  } // End of update
+  }
 
-  RestartGame() {
+  restartGame() {
     this.input.keyboard.removeAllKeys();
     console.log('You died');
     setTimeout(() => {
@@ -197,24 +200,28 @@ export default class GameScene extends Phaser.Scene {
     }, 3000);
   }
 
-  DashCooldown() {
-    timedEvent = this.time.addEvent({ delay: 500, callback: this.onDashCooldownEvent, callbackScope: this, repeat: 9 });    
+  dashCooldown() {
+    timedEvent = this.time.addEvent({ delay: 500, callback: this.onDashCooldownEvent, callbackScope: this, repeat: 9 });
   }
 
-  onDashCooldownEvent ()
-  {   
-    text.setText(timedEvent.getOverallProgress().toFixed(2).split(".")[1]);    
-    dashOverlayClass.set('dashOff'); 
+  onDashCooldownEvent () {
+    text.setText(timedEvent.getOverallProgress().toFixed(2).split(".")[1]);
     timedDashCooldown = parseInt(text.text);
-    if(timedDashCooldown < 99) {
-      console.log(parseInt(timedDashCooldown));      
-      dashCooldownPercentage.set(timedDashCooldown)
-    }
-    else if(timedDashCooldown == 99) {
-      dashOverlayClass.set('dashHighlight');
-      dashCooldownPercentage.set(100);
-    }
+    // dashOverlayClass.set('dashOff');
+    // if(timedDashCooldown < 99) {
+    //   console.log(parseInt(timedDashCooldown));
+    //   dashCooldownPercentage.set(timedDashCooldown)
+    // }
+    // else if(timedDashCooldown == 99) {
+    //   dashOverlayClass.set('dashHighlight');
+    //   dashCooldownPercentage.set(100);
+    // }
+
+    // FIXME: Fix values
+    gameState.update(state=> ({
+      ...state,
+      dashOverlayClass: timedDashCooldown < 99 ? 'dashOff' : 'dashHighlight',
+      dashCooldownPercentage: timedDashCooldown<99 ? timedDashCooldown : 100
+    }))
   }
 }
-
-
