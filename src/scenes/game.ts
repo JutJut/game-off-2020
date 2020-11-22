@@ -132,10 +132,10 @@ export default class GameScene extends Phaser.Scene {
       if (this.player.body.onFloor()) {
           this.player.body.setVelocityX(300);
           this.player.play(this.playerService.player.animations.RUN.key, true);
-          if(Phaser.Input.Keyboard.UpDuration(this.keyboardInputs.SHIFT,250) && this.canPlayerDash) {
+          if(Phaser.Input.Keyboard.DownDuration(this.keyboardInputs.SHIFT,250) && this.canPlayerDash) {
             this.player.play(this.playerService.player.animations.DASH.key, true);
-            this.player.body.setVelocityX(800);
-            this.dashCooldown();
+            this.player.body.setVelocityX(400);
+            this.dashCooldown();          
           }
           if(this.game.input.activePointer.leftButtonDown()) {
             this.player.play(this.playerService.player.animations.ATTACK.key, true);
@@ -143,9 +143,9 @@ export default class GameScene extends Phaser.Scene {
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(200);
-        if(Phaser.Input.Keyboard.UpDuration(this.keyboardInputs.SHIFT,250)  && this.canPlayerDash) {
+        if(Phaser.Input.Keyboard.DownDuration(this.keyboardInputs.SHIFT,250)  && this.canPlayerDash) {
           this.player.play(this.playerService.player.animations.DASH.key, true);
-          this.player.body.setVelocityX(800);
+          this.player.body.setVelocityX(400);
           this.dashCooldown();
         }
       }
@@ -161,17 +161,17 @@ export default class GameScene extends Phaser.Scene {
       if (this.player.body.onFloor()) {
           this.player.body.setVelocityX(-300);
           this.player.play(this.playerService.player.animations.RUN.key, true);
-          if(Phaser.Input.Keyboard.UpDuration(this.keyboardInputs.SHIFT,250) && this.canPlayerDash) {
+          if(Phaser.Input.Keyboard.DownDuration(this.keyboardInputs.SHIFT,250) && this.canPlayerDash) {
             this.player.play(this.playerService.player.animations.DASH.key, true);
-            this.player.body.setVelocityX(-800);
+            this.player.body.setVelocityX(-400);
             this.dashCooldown();
           }
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(-200);
-        if(Phaser.Input.Keyboard.UpDuration(this.keyboardInputs.SHIFT,250) && this.canPlayerDash) {
+        if(Phaser.Input.Keyboard.DownDuration(this.keyboardInputs.SHIFT,250) && this.canPlayerDash) {
           this.player.play(this.playerService.player.animations.DASH.key, true);
-          this.player.body.setVelocityX(-800);
+          this.player.body.setVelocityX(-400);
           this.dashCooldown();
         }
       }
@@ -201,27 +201,18 @@ export default class GameScene extends Phaser.Scene {
   }
 
   dashCooldown() {
-    timedEvent = this.time.addEvent({ delay: 500, callback: this.onDashCooldownEvent, callbackScope: this, repeat: 9 });
+    timedEvent = this.time.addEvent({ delay: 500, callback: this.onDashCooldownEvent, callbackScope: this, repeat: 5 });
   }
 
   onDashCooldownEvent () {
-    text.setText(timedEvent.getOverallProgress().toFixed(2).split(".")[1]);
-    timedDashCooldown = parseInt(text.text);
-    // dashOverlayClass.set('dashOff');
-    // if(timedDashCooldown < 99) {
-    //   console.log(parseInt(timedDashCooldown));
-    //   dashCooldownPercentage.set(timedDashCooldown)
-    // }
-    // else if(timedDashCooldown == 99) {
-    //   dashOverlayClass.set('dashHighlight');
-    //   dashCooldownPercentage.set(100);
-    // }
 
-    // FIXME: Fix values
+    text.setText(timedEvent.getOverallProgress().toFixed(2).split(".")[1]);
+    timedDashCooldown = text.text;   
     gameState.update(state=> ({
       ...state,
-      dashOverlayClass: timedDashCooldown < 99 ? 'dashOff' : 'dashHighlight',
-      dashCooldownPercentage: timedDashCooldown<99 ? timedDashCooldown : 100
-    }))
+      canDash: timedDashCooldown == 0 ? true : false,
+      dashOverlayClass: timedDashCooldown == 0 ? 'dashHighlight' : 'dashOff',
+      dashCooldownPercentage: timedDashCooldown == 0 ? 100 : timedDashCooldown,
+    }));
   }
 }

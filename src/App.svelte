@@ -9,8 +9,8 @@
   const config = {
     type: Phaser.AUTO,
     scale: {
-      width: 1500,
-      height: 800,
+      width: 1200,
+      height: 600,
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.RESIZE,
     },
@@ -62,7 +62,7 @@
 
   .progressBar {
     position: absolute;
-    top: 0;
+    top: 5%;
     left: 5%;
     bottom: 0;
     right: 0;

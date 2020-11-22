@@ -41,23 +41,20 @@
   }
 
   h3 {
+    position: absolute;
     user-select: none;
+    top:4%; left: 2%; 
   }
+
 </style>
 
-<h1>Player health is: {$gameState.playerHealth}</h1>
-
+<h3 class={dashClassValue}>DASH</h3>
 <ProgressBar
-  style="radial"
-  series={[{ perc: playerHealthValue, color: '#660000' }, { perc: playerDashCooldownValue, color: '#005c99' }]}
-  textSize={20}
+  style="linear"
+  series={[{ perc: playerHealthValue, color: '#660000' }]}
+  textSize={70}
   labelColor="#4d94ff"
-  stackSeries={false}
-  thickness={5}
-  margin={5}
-  width={200}
-  height={200}>
-  <foreignObject x="25" y="20" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-    <h3 class={dashClassValue}>DASH</h3>
-  </foreignObject>
+  width="15%"
+  height="15"  
+  > 
 </ProgressBar>
