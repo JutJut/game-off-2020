@@ -6,6 +6,8 @@
   import PlayerHealthProgressBar from './services/PlayerHealthProgressBar.svelte';
   import { gameState } from './store';
 
+  // import PlayButton from '../services/PlayButton.svelte';
+
   const config = {
     type: Phaser.AUTO,
     scale: {
@@ -71,7 +73,9 @@
 
 {#if $gameState.scene === 'Start Menu'}
   <main>
-    <div><button> Play </button></div>
+    <!-- <div><button> Play </button></div>
+     -->
+     <!-- <PlayButton /> -->
   </main>
 {/if}
 {#if $gameState.scene === 'Game'}

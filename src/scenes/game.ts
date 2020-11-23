@@ -43,16 +43,25 @@ export default class GameScene extends Phaser.Scene {
     //Starting values
     timedDashCooldown = this.playerService.player.helpers.dashPercentage;
 
+    //Set game state
+    gameState.set({
+      scene: this.scene.manager.getScene(this.scene.key).scene.key,
+      playerHealth: this.playerService.player.body.health,
+      dashCooldownPercentage: timedDashCooldown,
+      dashOverlayClass: 'dashHighlight',
+      canDash: true,
+    })
+
     this.backgroundImage1 = this.add.tileSprite(0, 0, width, height, 'background1').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
-    this.backgroundImage2 = this.add.tileSprite(0, 0, width, height, 'background2').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
-    const arrayOfHarmfulTiles = [];
+    this.backgroundImage2 = this.add.tileSprite(0, 0, width, height, 'background2').setOrigin(0,0).setScrollFactor(0).setScale(1.5);  
 
-    const tilemap = this.add.tilemap('tilemap');
+    // this.tilemap = this.add.tilemap('tilemap');
+    const tilemap = this.make.tilemap({key: 'tilemap'});
     const moonshot = tilemap.addTilesetImage('moonshot');
-    const mainLayer = tilemap.createStaticLayer('main', [moonshot], 0, 0);
-
+    const mainLayer = tilemap.createDynamicLayer('main', [moonshot], 0, 0);
     const background = tilemap.addTilesetImage('backgroundLayer');
-    const backgroundLayer = tilemap.createStaticLayer('backgroundLayer', [background], 0, 0);
+    const backgroundLayer = tilemap.createDynamicLayer('backgroundLayer', [background], 0, 0);
+    const deathLayer = tilemap.createDynamicLayer('deathLayer', [background], 0, 0);
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
@@ -62,18 +71,23 @@ export default class GameScene extends Phaser.Scene {
       .setOffset(30,35);
     this.player.body.setGravityY(300);
 
-
-    gameState.set({
-      scene: this.scene.manager.getScene(this.scene.key).scene.key,
-      playerHealth: this.playerService.player.body.health,
-      dashCooldownPercentage: timedDashCooldown,
-      dashOverlayClass: 'dashHighlight',
-      canDash: true,
-    })
+    // Add death layer ovelap
+    this.physics.add.overlap(
+      this.player,
+      deathLayer,
+      function onCollide (_sprite, tile) {
+        this.player.play(this.playerService.player.animations.DEATH.key, false);
+        this.restartGame();
+      },
+      function process (_sprite, tile) {
+        return (tile.index !== -1);
+      },
+      this
+    );
 
     // Add player collision with platforms
     this.physics.add.collider(this.player, mainLayer);
-    mainLayer.setCollisionByProperty({ isPlatform: true });
+    mainLayer.setCollisionByProperty({ isPlatform: true });   
 
     for (const [_, value] of Object.entries(this.playerService.player.animations)) {
       this.anims.create({
@@ -101,7 +115,7 @@ export default class GameScene extends Phaser.Scene {
       this.canPlayerDash = value.canDash;
     });
 
-    text = this.add.text(0, 0, '');
+    text = this.add.text(0, 0, '');     
   }
 
   update() {
@@ -110,13 +124,6 @@ export default class GameScene extends Phaser.Scene {
     this.backgroundImage2.tilePositionX = this.camera.scrollX * 0.5;
 
     this.didPressJump = Phaser.Input.Keyboard.JustUp(this.keyboardInputs.W);
-
-    if (Phaser.Input.Keyboard.JustDown(this.keyboardInputs.SPACE)) {
-      this.player.play(this.playerService.player.animations.DEATH.key, false);
-      console.log("You Dead")
-      // TODO trigger GAME OVER or Restart
-      return this.restartGame();
-    }
 
     if (this.player.body.onFloor()) {
       this.jumpCounter = 0;
@@ -193,8 +200,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   restartGame() {
-    this.input.keyboard.removeAllKeys();
-    console.log('You died');
+    this.input.keyboard.removeAllKeys();  
     setTimeout(() => {
       this.scene.start(OurScenes.GAME);
     }, 3000);
@@ -215,4 +221,5 @@ export default class GameScene extends Phaser.Scene {
       dashCooldownPercentage: timedDashCooldown == 0 ? 100 : timedDashCooldown,
     }));
   }
+
 }
