@@ -25,6 +25,8 @@ export default class GameScene extends Phaser.Scene {
   canPlayerDash: boolean;
   jumpCounter: number;
   dashed: boolean;
+  objectLayer: any;
+  elevators: any;
 
   constructor() {
     super({
@@ -42,7 +44,7 @@ export default class GameScene extends Phaser.Scene {
 
     //Starting values
     timedDashCooldown = this.playerService.player.helpers.dashPercentage;
-
+    this.elevators = this.add.group();
     //Set game state
     gameState.set({
       scene: this.scene.manager.getScene(this.scene.key).scene.key,
@@ -52,16 +54,26 @@ export default class GameScene extends Phaser.Scene {
       canDash: true,
     })
 
+    // Background images
     this.backgroundImage1 = this.add.tileSprite(0, 0, width, height, 'background1').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
     this.backgroundImage2 = this.add.tileSprite(0, 0, width, height, 'background2').setOrigin(0,0).setScrollFactor(0).setScale(1.5);  
 
-    // this.tilemap = this.add.tilemap('tilemap');
+    // Tile layers
     const tilemap = this.make.tilemap({key: 'tilemap'});
     const moonshot = tilemap.addTilesetImage('moonshot');
     const mainLayer = tilemap.createDynamicLayer('main', [moonshot], 0, 0);
     const background = tilemap.addTilesetImage('backgroundLayer');
     const backgroundLayer = tilemap.createDynamicLayer('backgroundLayer', [background], 0, 0);
     const deathLayer = tilemap.createDynamicLayer('deathLayer', [background], 0, 0);
+
+    //Objects
+    this.objectLayer = tilemap.createFromObjects('tileObjects', 57, {key: 'elevator'});
+    this.objectLayer.forEach(object => {
+      this.physics.world.enable(object);        
+      object.body.allowGravity = false;
+      object.body.immovable=true;   
+      console.log(object);   
+    });
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
@@ -86,9 +98,11 @@ export default class GameScene extends Phaser.Scene {
     );
 
     // Add player collision with platforms
-    this.physics.add.collider(this.player, mainLayer);
+    this.physics.add.collider(this.player, mainLayer);       
+    this.physics.add.collider(this.player, this.objectLayer, null, null, this);
+    this.physics.add.collider(mainLayer, this.objectLayer, null, null, this);
     mainLayer.setCollisionByProperty({ isPlatform: true });   
-
+  
     for (const [_, value] of Object.entries(this.playerService.player.animations)) {
       this.anims.create({
         key: value.key,
@@ -119,7 +133,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   update() {
-
     this.backgroundImage1.tilePositionX = this.camera.scrollX * 0.3;
     this.backgroundImage2.tilePositionX = this.camera.scrollX * 0.5;
 
