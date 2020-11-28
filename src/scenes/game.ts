@@ -6,6 +6,7 @@ import { OurScenes } from '../enums/scenes';
 import { KeyboardService } from '../services/keyboard.service';
 import { PlayerService } from '../services/player.service';
 import { gameState } from '../store';
+import { restartGame } from '../services/game.service';
 
 let timedDashCooldown;
 let timedEvent;
@@ -23,7 +24,6 @@ export default class GameScene extends Phaser.Scene {
   canPlayerJump: boolean;
   canPlayerDash: boolean;
   jumpCounter: number;
-  playerDefaultGravityY: number;
   elevators: any;
   objectLayer: any;
 
@@ -35,7 +35,7 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     this.keyboardService = new KeyboardService(this.input);
-    this.playerService = PlayerService.Instance;
+    this.playerService = PlayerService.Instance;   
     this.playerService.player = mainCharacter;
     this.game.input.mouse.capture = true;
     // IMAGES | TILES
@@ -43,9 +43,8 @@ export default class GameScene extends Phaser.Scene {
 
     //Starting values
     timedDashCooldown = this.playerService.player.helpers.dashPercentage;
-    this.jumpCounter = 0;   
-    this.playerDefaultGravityY = 300;
-    text = this.add.text(0, 0, '');  
+    this.jumpCounter = 0;
+    text = this.add.text(0, 0, '');
     //Set game state
     gameState.set({
       scene: this.scene.manager.getScene(this.scene.key).scene.key,
@@ -70,15 +69,6 @@ export default class GameScene extends Phaser.Scene {
     const backgroundLayer = tilemap.createStaticLayer('backgroundLayer', [background], 0, 0);
 
     const deathLayer = tilemap.createDynamicLayer('deathLayer', [background], 0, 0);
-    
-    //Objects
-    this.objectLayer = tilemap.createFromObjects('tileObjects', 57, {key: 'elevator'});
-    this.objectLayer.forEach(object => {
-      this.physics.world.enable(object);
-      object.body.allowGravity = false;
-      object.body.immovable=true;
-      console.log(object);
-    });
 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
@@ -86,7 +76,7 @@ export default class GameScene extends Phaser.Scene {
       .setBounce(0.2)
       .setCollideWorldBounds(true)
       .setOffset(30,35);
-    this.player.body.setGravityY(this.playerDefaultGravityY);
+    this.player.body.setGravityY(300);
 
     // Front layer has to be initialized after player to obtain highest order
     const frontLayer = tilemap.createStaticLayer('frontLayer', [front], 0,0);
@@ -97,13 +87,26 @@ export default class GameScene extends Phaser.Scene {
       deathLayer,
       function onCollide (_sprite, tile) {
         this.player.play(this.playerService.player.animations.DEATH.key, false);
-        this.restartGame();
+        restartGame(this.input, this.scene);
       },
       function process (_sprite, tile: any) {
         return (tile.index !== -1);
       },
       this
     );
+
+    //Objects
+    this.objectLayer = tilemap.createFromObjects('tileObjects', 57, {key: 'elevator'});
+    let objectIdCounter = 0;
+    this.objectLayer.forEach(object => {
+      this.physics.world.enable(object);
+      object.body.allowGravity = false;
+      object.body.immovable=true;
+      object.customData = {
+        id: objectIdCounter++
+      }
+      this.AnimateElevator(object, this.player);
+    });
 
     // Add player collision with platforms
     this.physics.add.collider(this.player, mainLayer);
@@ -162,10 +165,7 @@ export default class GameScene extends Phaser.Scene {
             this.player.play(this.playerService.player.animations.DASH.key, true);
             this.player.body.setVelocityX(400);
             this.dashCooldown();
-          }
-          if(this.game.input.activePointer.leftButtonDown()) {
-            this.player.play(this.playerService.player.animations.ATTACK.key, true);
-          }
+          }          
       } else {
         this.player.play(this.playerService.player.animations.JUMP.key, true);
         this.player.body.setVelocityX(200);
@@ -221,13 +221,6 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  restartGame() {
-    this.input.keyboard.removeAllKeys();
-    setTimeout(() => {
-      this.scene.start(OurScenes.GAME);
-    }, 3000);
-  }
-
   dashCooldown() {
     timedEvent = this.time.addEvent({ delay: 500, callback: this.onDashCooldownEvent, callbackScope: this, repeat: 5 });
   }
@@ -242,4 +235,31 @@ export default class GameScene extends Phaser.Scene {
       dashCooldownPercentage: timedDashCooldown == 0 ? 100 : timedDashCooldown,
     }));
   }
+
+  AnimateElevator (movingObject, mySprite) {
+    if(movingObject.customData.id == 0) { // Start of elevator 0 animation
+      this.tweens.timeline({
+        targets: movingObject.body.velocity,
+        loop: -1,       
+        tweens: [
+          { x: 0, y: 0, duration: 2000, ease: 'Stepped', onComplete: function() {
+            if (movingObject.body.moves && movingObject.body.touching.up && mySprite.body.touching.down) {
+              mySprite.setGravityY(15000);            
+            } 
+          }},
+          { x: 950, y: 100, duration: 2000, ease: 'Stepped', onComplete: function() {            
+              mySprite.setGravityY(300);
+          }},
+          { x: 0, y: 0, duration: 2000, ease: 'Stepped', onComplete: function() {
+            if (movingObject.body.moves && movingObject.body.touching.up && mySprite.body.touching.down) {
+              mySprite.setGravityY(15000);
+            } 
+          }},
+          { x: -950, y: -100, duration: 2000, ease: 'Stepped', onComplete: function() {
+              mySprite.setGravityY(300);
+          }},         
+        ]
+      });
+    } // End of elevator 0 animation
+  }  
 }
