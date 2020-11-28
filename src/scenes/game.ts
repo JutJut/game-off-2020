@@ -19,14 +19,13 @@ export default class GameScene extends Phaser.Scene {
   camera;
   playerService: PlayerService;
   keyboardInputs;
-  didPressJump: boolean;
   keyboardService: KeyboardService;
-  canJump: boolean;
+  canPlayerJump: boolean;
   canPlayerDash: boolean;
   jumpCounter: number;
-  dashed: boolean;
-  objectLayer: any;
+  playerDefaultGravityY: number;
   elevators: any;
+  objectLayer: any;
 
   constructor() {
     super({
@@ -44,7 +43,9 @@ export default class GameScene extends Phaser.Scene {
 
     //Starting values
     timedDashCooldown = this.playerService.player.helpers.dashPercentage;
-    this.elevators = this.add.group();
+    this.jumpCounter = 0;   
+    this.playerDefaultGravityY = 300;
+    text = this.add.text(0, 0, '');  
     //Set game state
     gameState.set({
       scene: this.scene.manager.getScene(this.scene.key).scene.key,
@@ -52,6 +53,7 @@ export default class GameScene extends Phaser.Scene {
       dashCooldownPercentage: timedDashCooldown,
       dashOverlayClass: 'dashHighlight',
       canDash: true,
+      canJump: true
     })
 
     // Background images
@@ -68,7 +70,7 @@ export default class GameScene extends Phaser.Scene {
     const backgroundLayer = tilemap.createStaticLayer('backgroundLayer', [background], 0, 0);
 
     const deathLayer = tilemap.createDynamicLayer('deathLayer', [background], 0, 0);
-
+    
     //Objects
     this.objectLayer = tilemap.createFromObjects('tileObjects', 57, {key: 'elevator'});
     this.objectLayer.forEach(object => {
@@ -84,7 +86,7 @@ export default class GameScene extends Phaser.Scene {
       .setBounce(0.2)
       .setCollideWorldBounds(true)
       .setOffset(30,35);
-    this.player.body.setGravityY(300);
+    this.player.body.setGravityY(this.playerDefaultGravityY);
 
     // Front layer has to be initialized after player to obtain highest order
     const frontLayer = tilemap.createStaticLayer('frontLayer', [front], 0,0);
@@ -125,14 +127,11 @@ export default class GameScene extends Phaser.Scene {
     this.keyboardInputs = this.input.keyboard.addKeys(movementKeys);
     this.camera = this.cameras.main
                   .setBounds(0, 0, 12800, 3200)
-                  .startFollow(this.player, true, 1, 1, 0, +64);
-
-    this.jumpCounter = 0;
-    this.canJump = true;
-
+                  .startFollow(this.player, true, 1, 1, 0, +64);   
 
     const unsubscribe = gameState.subscribe((value) => {
       this.canPlayerDash = value.canDash;
+      this.canPlayerJump = value.canJump;
     });
 
     text = this.add.text(0, 0, '');
@@ -142,11 +141,12 @@ export default class GameScene extends Phaser.Scene {
     this.backgroundImage1.tilePositionX = this.camera.scrollX * 0.3;
     this.backgroundImage2.tilePositionX = this.camera.scrollX * 0.5;
 
-    this.didPressJump = Phaser.Input.Keyboard.JustUp(this.keyboardInputs.W);
-
     if (this.player.body.onFloor()) {
       this.jumpCounter = 0;
-      this.canJump = true;
+      gameState.update(state=> ({
+        ...state,
+        canJump: true
+      }));
       if (this.player.anims.getCurrentKey() === 'JUMP') {
         this.player.play(this.playerService.player.animations.JUMP.key, false);
         this.player.play(this.playerService.player.animations.IDLE.key, true);
@@ -208,12 +208,15 @@ export default class GameScene extends Phaser.Scene {
       this.player.play(this.playerService.player.animations.IDLE.key, true);
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.keyboardInputs.W) && this.canJump) {
+    if (Phaser.Input.Keyboard.JustDown(this.keyboardInputs.W) && this.canPlayerJump) {
       this.player.play(this.playerService.player.animations.JUMP.key, true);
       this.player.setVelocityY(-300);
       this.jumpCounter++;
       if (this.jumpCounter === 2) {
-        this.canJump = false;
+        gameState.update(state=> ({
+          ...state,
+          canJump: true
+        }));
       }
     }
   }
@@ -230,7 +233,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   onDashCooldownEvent () {
-
     text.setText(timedEvent.getOverallProgress().toFixed(2).split(".")[1]);
     timedDashCooldown = text.text;
     gameState.update(state=> ({

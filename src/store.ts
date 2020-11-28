@@ -5,5 +5,6 @@ export const gameState = writable({
   playerHealth: 150,
   dashCooldownPercentage: 0,
   dashOverlayClass: '',
-  canDash: true
+  canDash: true,
+  canJump: true
 });

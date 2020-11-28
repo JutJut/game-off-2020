@@ -30,7 +30,7 @@
         width: 12800,
         height: 3200,
         gravity: { y: 300 },
-        debug: true,
+        // debug: true,
         fps: 60,
         checkCollision: {
           up: true,
