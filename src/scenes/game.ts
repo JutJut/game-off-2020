@@ -19,13 +19,11 @@ export default class GameScene extends Phaser.Scene {
   camera;
   playerService: PlayerService;
   keyboardInputs;
-  didPressJump: boolean;
   keyboardService: KeyboardService;
-  canJump: boolean;
+  canPlayerJump: boolean;
   canPlayerDash: boolean;
   jumpCounter: number;
-  dashed: boolean;
-  objectLayer: any;
+  playerDefaultGravityY: number;
   elevators: any;
 
   constructor() {
@@ -44,7 +42,9 @@ export default class GameScene extends Phaser.Scene {
 
     //Starting values
     timedDashCooldown = this.playerService.player.helpers.dashPercentage;
-    this.elevators = this.add.group();
+    this.jumpCounter = 0;   
+    this.playerDefaultGravityY = 300;
+    text = this.add.text(0, 0, '');  
     //Set game state
     gameState.set({
       scene: this.scene.manager.getScene(this.scene.key).scene.key,
@@ -52,6 +52,7 @@ export default class GameScene extends Phaser.Scene {
       dashCooldownPercentage: timedDashCooldown,
       dashOverlayClass: 'dashHighlight',
       canDash: true,
+      canJump: true
     })
 
     // Background images
@@ -65,23 +66,30 @@ export default class GameScene extends Phaser.Scene {
     const background = tilemap.addTilesetImage('backgroundLayer');
     const backgroundLayer = tilemap.createDynamicLayer('backgroundLayer', [background], 0, 0);
     const deathLayer = tilemap.createDynamicLayer('deathLayer', [background], 0, 0);
-
+    
     //Objects
-    this.objectLayer = tilemap.createFromObjects('tileObjects', 57, {key: 'elevator'});
-    this.objectLayer.forEach(object => {
-      this.physics.world.enable(object);        
-      object.body.allowGravity = false;
-      object.body.immovable=true;   
-      console.log(object);   
-    });
-
+    tilemap.addTilesetImage('elevator');
+    this.elevators = tilemap.createFromObjects('elevators', 1577, {key: 'elevators'}); 
+ 
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
       .sprite(2*32, 85*32, this.playerService.player.key)
       .setBounce(0.2)
       .setCollideWorldBounds(true)
       .setOffset(30,35);
-    this.player.body.setGravityY(300);
+    this.player.body.setGravityY(this.playerDefaultGravityY);
+
+    //Elevator animations
+    let idCounter = 0;
+    this.elevators.forEach(object => {
+      this.physics.world.enable(object);        
+      object.body.allowGravity = false;
+      object.body.immovable=true;      
+      object.customData = {
+        elevatorId: idCounter++
+      }  
+      this.AnimateElevator(object, this.player);      
+    });
 
     // Add death layer ovelap
     this.physics.add.overlap(
@@ -99,8 +107,7 @@ export default class GameScene extends Phaser.Scene {
 
     // Add player collision with platforms
     this.physics.add.collider(this.player, mainLayer);       
-    this.physics.add.collider(this.player, this.objectLayer, null, null, this);
-    this.physics.add.collider(mainLayer, this.objectLayer, null, null, this);
+    this.physics.add.collider(this.player, this.elevators, null, null, this);
     mainLayer.setCollisionByProperty({ isPlatform: true });   
   
     for (const [_, value] of Object.entries(this.playerService.player.animations)) {
@@ -119,28 +126,24 @@ export default class GameScene extends Phaser.Scene {
     this.keyboardInputs = this.input.keyboard.addKeys(movementKeys);
     this.camera = this.cameras.main
                   .setBounds(0, 0, 12800, 3200)
-                  .startFollow(this.player, true, 1, 1, 0, +64);
-
-    this.jumpCounter = 0;
-    this.canJump = true;
-
+                  .startFollow(this.player, true, 1, 1, 0, +64);   
 
     const unsubscribe = gameState.subscribe((value) => {
       this.canPlayerDash = value.canDash;
+      this.canPlayerJump = value.canJump;
     });
-
-    text = this.add.text(0, 0, '');     
   }
 
   update() {
     this.backgroundImage1.tilePositionX = this.camera.scrollX * 0.3;
     this.backgroundImage2.tilePositionX = this.camera.scrollX * 0.5;
 
-    this.didPressJump = Phaser.Input.Keyboard.JustUp(this.keyboardInputs.W);
-
     if (this.player.body.onFloor()) {
       this.jumpCounter = 0;
-      this.canJump = true;
+      gameState.update(state=> ({
+        ...state,
+        canJump: true
+      }));
       if (this.player.anims.getCurrentKey() === 'JUMP') {
         this.player.play(this.playerService.player.animations.JUMP.key, false);
         this.player.play(this.playerService.player.animations.IDLE.key, true);
@@ -202,12 +205,15 @@ export default class GameScene extends Phaser.Scene {
       this.player.play(this.playerService.player.animations.IDLE.key, true);
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.keyboardInputs.W) && this.canJump) {
+    if (Phaser.Input.Keyboard.JustDown(this.keyboardInputs.W) && this.canPlayerJump) {
       this.player.play(this.playerService.player.animations.JUMP.key, true);
       this.player.setVelocityY(-300);
       this.jumpCounter++;
       if (this.jumpCounter === 2) {
-        this.canJump = false;
+        gameState.update(state=> ({
+          ...state,
+          canJump: true
+        }));
       }
     }
   }
@@ -224,7 +230,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   onDashCooldownEvent () {
-
     text.setText(timedEvent.getOverallProgress().toFixed(2).split(".")[1]);
     timedDashCooldown = text.text;   
     gameState.update(state=> ({
@@ -235,4 +240,31 @@ export default class GameScene extends Phaser.Scene {
     }));
   }
 
+  AnimateElevator(movingObject, mySprite) {
+    if(movingObject.customData.elevatorId == 0) { // Start of elevator 0 animation
+      this.tweens.timeline({
+        targets: movingObject.body.velocity,
+        loop: -1,       
+        tweens: [
+          { x: 0, y: 0, duration: 2000, ease: 'Stepped', onComplete: function() {
+            if (movingObject.body.moves && movingObject.body.touching.up && mySprite.body.touching.down) {
+              mySprite.setGravityY(15000);
+              console.log('test')
+            } 
+          }},
+          { x: 950, y: 100, duration: 2000, ease: 'Stepped', onComplete: function() {            
+              mySprite.setGravityY(this.playerDefaultGravityY);
+          }},
+          { x: 0, y: 0, duration: 2000, ease: 'Stepped', onComplete: function() {
+            if (movingObject.body.moves && movingObject.body.touching.up && mySprite.body.touching.down) {
+              mySprite.setGravityY(15000);
+            } 
+          }},
+          { x: -950, y: -100, duration: 2000, ease: 'Stepped', onComplete: function() {
+              mySprite.setGravityY(this.playerDefaultGravityY);
+          }},         
+        ]
+      });
+    } // End of elevator 0 animation
+  }
 }
