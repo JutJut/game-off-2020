@@ -56,23 +56,26 @@ export default class GameScene extends Phaser.Scene {
 
     // Background images
     this.backgroundImage1 = this.add.tileSprite(0, 0, width, height, 'background1').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
-    this.backgroundImage2 = this.add.tileSprite(0, 0, width, height, 'background2').setOrigin(0,0).setScrollFactor(0).setScale(1.5);  
+    this.backgroundImage2 = this.add.tileSprite(0, 0, width, height, 'background2').setOrigin(0,0).setScrollFactor(0).setScale(1.5);
 
     // Tile layers
-    const tilemap = this.make.tilemap({key: 'tilemap'});
+    const tilemap = this.add.tilemap('tilemap');
     const moonshot = tilemap.addTilesetImage('moonshot');
-    const mainLayer = tilemap.createDynamicLayer('main', [moonshot], 0, 0);
     const background = tilemap.addTilesetImage('backgroundLayer');
-    const backgroundLayer = tilemap.createDynamicLayer('backgroundLayer', [background], 0, 0);
+    const front = tilemap.addTilesetImage('frontLayer');
+
+    const mainLayer = tilemap.createStaticLayer('main', [moonshot], 0, 0);
+    const backgroundLayer = tilemap.createStaticLayer('backgroundLayer', [background], 0, 0);
+
     const deathLayer = tilemap.createDynamicLayer('deathLayer', [background], 0, 0);
 
     //Objects
     this.objectLayer = tilemap.createFromObjects('tileObjects', 57, {key: 'elevator'});
     this.objectLayer.forEach(object => {
-      this.physics.world.enable(object);        
+      this.physics.world.enable(object);
       object.body.allowGravity = false;
-      object.body.immovable=true;   
-      console.log(object);   
+      object.body.immovable=true;
+      console.log(object);
     });
 
     // PLAYER AND ANIMATIONS
@@ -83,6 +86,9 @@ export default class GameScene extends Phaser.Scene {
       .setOffset(30,35);
     this.player.body.setGravityY(300);
 
+    // Front layer has to be initialized after player to obtain highest order
+    const frontLayer = tilemap.createStaticLayer('frontLayer', [front], 0,0);
+
     // Add death layer ovelap
     this.physics.add.overlap(
       this.player,
@@ -91,18 +97,18 @@ export default class GameScene extends Phaser.Scene {
         this.player.play(this.playerService.player.animations.DEATH.key, false);
         this.restartGame();
       },
-      function process (_sprite, tile) {
+      function process (_sprite, tile: any) {
         return (tile.index !== -1);
       },
       this
     );
 
     // Add player collision with platforms
-    this.physics.add.collider(this.player, mainLayer);       
+    this.physics.add.collider(this.player, mainLayer);
     this.physics.add.collider(this.player, this.objectLayer, null, null, this);
     this.physics.add.collider(mainLayer, this.objectLayer, null, null, this);
-    mainLayer.setCollisionByProperty({ isPlatform: true });   
-  
+    mainLayer.setCollisionByProperty({ isPlatform: true });
+
     for (const [_, value] of Object.entries(this.playerService.player.animations)) {
       this.anims.create({
         key: value.key,
@@ -129,7 +135,7 @@ export default class GameScene extends Phaser.Scene {
       this.canPlayerDash = value.canDash;
     });
 
-    text = this.add.text(0, 0, '');     
+    text = this.add.text(0, 0, '');
   }
 
   update() {
@@ -155,7 +161,7 @@ export default class GameScene extends Phaser.Scene {
           if(Phaser.Input.Keyboard.DownDuration(this.keyboardInputs.SHIFT,250) && this.canPlayerDash) {
             this.player.play(this.playerService.player.animations.DASH.key, true);
             this.player.body.setVelocityX(400);
-            this.dashCooldown();          
+            this.dashCooldown();
           }
           if(this.game.input.activePointer.leftButtonDown()) {
             this.player.play(this.playerService.player.animations.ATTACK.key, true);
@@ -213,7 +219,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   restartGame() {
-    this.input.keyboard.removeAllKeys();  
+    this.input.keyboard.removeAllKeys();
     setTimeout(() => {
       this.scene.start(OurScenes.GAME);
     }, 3000);
@@ -226,7 +232,7 @@ export default class GameScene extends Phaser.Scene {
   onDashCooldownEvent () {
 
     text.setText(timedEvent.getOverallProgress().toFixed(2).split(".")[1]);
-    timedDashCooldown = text.text;   
+    timedDashCooldown = text.text;
     gameState.update(state=> ({
       ...state,
       canDash: timedDashCooldown == 0 ? true : false,
@@ -234,5 +240,4 @@ export default class GameScene extends Phaser.Scene {
       dashCooldownPercentage: timedDashCooldown == 0 ? 100 : timedDashCooldown,
     }));
   }
-
 }
