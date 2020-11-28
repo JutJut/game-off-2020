@@ -1,0 +1,5 @@
+main.svelte-yw9vbg{position:absolute;top:0;left:0;right:0;bottom:0;height:100vh;width:100vw;display:flex;justify-content:center;align-items:center}.progressBar.svelte-yw9vbg{position:absolute;top:5%;left:5%;bottom:0;right:0}
+.dashHighlight.svelte-11kzajn{color:#fff;-webkit-animation:svelte-11kzajn-dashHighlight 1s ease-in-out infinite alternate;-moz-animation:svelte-11kzajn-dashHighlight 1s ease-in-out infinite alternate;animation:svelte-11kzajn-dashHighlight 1s ease-in-out infinite alternate}@-webkit-keyframes svelte-11kzajn-dashHighlight{from{text-shadow:1px #fff, 2px #fff, 3px #e60073, 4px #e60073, 5px #e60073, 6px #e60073, 7px #e60073}to{text-shadow:0 0 2px #fff, 0 0 3px #ff4da6, 0 0 4px #ff4da6, 0 0 5px #ff4da6, 0 0 6px #ff4da6, 0 0 7px #ff4da6,
+        0 0 8px #ff4da6}}.dashOff.svelte-11kzajn{color:#808080}h3.svelte-11kzajn{position:absolute;user-select:none;top:4%;left:2%}
+
+/*# sourceMappingURL=bundle.css.map */
