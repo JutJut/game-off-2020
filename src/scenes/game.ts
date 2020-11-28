@@ -25,6 +25,7 @@ export default class GameScene extends Phaser.Scene {
   jumpCounter: number;
   playerDefaultGravityY: number;
   elevators: any;
+  objectLayer: any;
 
   constructor() {
     super({
@@ -71,11 +72,6 @@ export default class GameScene extends Phaser.Scene {
     const deathLayer = tilemap.createDynamicLayer('deathLayer', [background], 0, 0);
     
     //Objects
-<<<<<<< HEAD
-    tilemap.addTilesetImage('elevator');
-    this.elevators = tilemap.createFromObjects('elevators', 1577, {key: 'elevators'}); 
- 
-=======
     this.objectLayer = tilemap.createFromObjects('tileObjects', 57, {key: 'elevator'});
     this.objectLayer.forEach(object => {
       this.physics.world.enable(object);
@@ -84,7 +80,6 @@ export default class GameScene extends Phaser.Scene {
       console.log(object);
     });
 
->>>>>>> 20f9d1f42a59033d1f8d849931cbe2efc950e070
     // PLAYER AND ANIMATIONS
     this.player = this.physics.add
       .sprite(2*32, 85*32, this.playerService.player.key)
@@ -92,18 +87,6 @@ export default class GameScene extends Phaser.Scene {
       .setCollideWorldBounds(true)
       .setOffset(30,35);
     this.player.body.setGravityY(this.playerDefaultGravityY);
-
-    //Elevator animations
-    let idCounter = 0;
-    this.elevators.forEach(object => {
-      this.physics.world.enable(object);        
-      object.body.allowGravity = false;
-      object.body.immovable=true;      
-      object.customData = {
-        elevatorId: idCounter++
-      }  
-      this.AnimateElevator(object, this.player);      
-    });
 
     // Front layer has to be initialized after player to obtain highest order
     const frontLayer = tilemap.createStaticLayer('frontLayer', [front], 0,0);
@@ -123,18 +106,11 @@ export default class GameScene extends Phaser.Scene {
     );
 
     // Add player collision with platforms
-<<<<<<< HEAD
-    this.physics.add.collider(this.player, mainLayer);       
-    this.physics.add.collider(this.player, this.elevators, null, null, this);
-    mainLayer.setCollisionByProperty({ isPlatform: true });   
-  
-=======
     this.physics.add.collider(this.player, mainLayer);
     this.physics.add.collider(this.player, this.objectLayer, null, null, this);
     this.physics.add.collider(mainLayer, this.objectLayer, null, null, this);
     mainLayer.setCollisionByProperty({ isPlatform: true });
 
->>>>>>> 20f9d1f42a59033d1f8d849931cbe2efc950e070
     for (const [_, value] of Object.entries(this.playerService.player.animations)) {
       this.anims.create({
         key: value.key,
@@ -157,11 +133,8 @@ export default class GameScene extends Phaser.Scene {
       this.canPlayerDash = value.canDash;
       this.canPlayerJump = value.canJump;
     });
-<<<<<<< HEAD
-=======
 
     text = this.add.text(0, 0, '');
->>>>>>> 20f9d1f42a59033d1f8d849931cbe2efc950e070
   }
 
   update() {
@@ -269,35 +242,4 @@ export default class GameScene extends Phaser.Scene {
       dashCooldownPercentage: timedDashCooldown == 0 ? 100 : timedDashCooldown,
     }));
   }
-<<<<<<< HEAD
-
-  AnimateElevator(movingObject, mySprite) {
-    if(movingObject.customData.elevatorId == 0) { // Start of elevator 0 animation
-      this.tweens.timeline({
-        targets: movingObject.body.velocity,
-        loop: -1,       
-        tweens: [
-          { x: 0, y: 0, duration: 2000, ease: 'Stepped', onComplete: function() {
-            if (movingObject.body.moves && movingObject.body.touching.up && mySprite.body.touching.down) {
-              mySprite.setGravityY(15000);
-              console.log('test')
-            } 
-          }},
-          { x: 950, y: 100, duration: 2000, ease: 'Stepped', onComplete: function() {            
-              mySprite.setGravityY(this.playerDefaultGravityY);
-          }},
-          { x: 0, y: 0, duration: 2000, ease: 'Stepped', onComplete: function() {
-            if (movingObject.body.moves && movingObject.body.touching.up && mySprite.body.touching.down) {
-              mySprite.setGravityY(15000);
-            } 
-          }},
-          { x: -950, y: -100, duration: 2000, ease: 'Stepped', onComplete: function() {
-              mySprite.setGravityY(this.playerDefaultGravityY);
-          }},         
-        ]
-      });
-    } // End of elevator 0 animation
-  }
-=======
->>>>>>> 20f9d1f42a59033d1f8d849931cbe2efc950e070
 }
