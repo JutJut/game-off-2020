@@ -215,7 +215,7 @@ export default class GameScene extends Phaser.Scene {
       if (this.jumpCounter === 2) {
         gameState.update(state=> ({
           ...state,
-          canJump: true
+          canJump: false
         }));
       }
     }
