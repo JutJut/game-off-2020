@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+
 import { mainCharacter } from '../config/characterConfig';
 import { OurScenes } from '../enums/scenes';
 
@@ -16,7 +17,6 @@ export default class LoadScene extends Phaser.Scene {
   }
 
   preload() {
-
     // Images
     this.backgroundImage1 = this.load.image('background1', './assets/backgrounds/background1.png');
     this.backgroundImage2 = this.load.image('background2', './assets/backgrounds/background2.png');
@@ -35,7 +35,8 @@ export default class LoadScene extends Phaser.Scene {
 
     // Layers
     this.load.image('moonshot', './assets/tilemap/tiles/main.png');
-    this.load.image('backgroundLayer', './assets/tilemap/tiles/background_layer.png');  
+    this.load.image('frontLayer', './assets/tilemap/tiles/front_layer.png');
+    this.load.image('backgroundLayer', './assets/tilemap/tiles/background_layer.png');
     this.load.image('elevator', './assets/tilemap/tiles/Animated/elevator.png');
     this.load.tilemapTiledJSON('tilemap', './assets/tilemap/moonshot.json');
 
